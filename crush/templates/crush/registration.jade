@@ -1,0 +1,21 @@
+!!! 5
+<!DOCTYPE HTML>
+html
+		
+	include crush/includes/head
+	include crush/includes/nav
+	
+	title Block x Block
+	body(style="background-color: #BAEFFF; padding-top: 70px; padding-left: 20px;")
+		h1(style="font-size:70px;") Registration
+		br
+		pre(style="margin-left:45px; width: 600px;")
+			form(action="register/", method="post", id ="SchoolRegistration", name = "SchoolRegistration",style=""){% csrf_token %}
+				input.input-large(type="text", required, placeholder="School Name", name ="SchoolName_Reg", id = "SchoolName_Reg", style="height: 25px; display:inline;")
+				input.input-large(type="text", required, placeholder="School Password", name ="SchoolPassword_Reg", id = "SchoolPassword_Reg", type="password", style="height: 25px;")
+				input.input-large(type="text", required, placeholder="Re-Enter Password", name ="SchoolPassword2_Reg", id = "SchoolPassword2_Reg", type="password", style="height: 25px;")
+				input.input-large(type="text", required, placeholder="Zip Code", name ="Zip_Reg", id = "Zip_Reg", style="height: 25px;")
+				input.input-large(type="text", required, placeholder="Administrator Email", name ="Email", id = "Email", style="height: 25px;")
+				
+				input.btn-Gret(type="submit", value = "Login")
+				
