@@ -21,6 +21,7 @@ class User_profile(models.Model):
     user_profile = models.OneToOneField(User,related_name='user_profile')
     School = models.ForeignKey(SchoolProfile, related_name="School", null=True)
     Class_chosen = models.OneToOneField('Preference', related_name="class_chosen", null=True, on_delete=models.SET_NULL)
+    Locked = models.BooleanField( default=False)
     def _unicode_(self):
         return (self.profile.username)
         
