@@ -28,4 +28,6 @@ class Preference(models.Model):
     student = models.ForeignKey(User_profile, related_name="student",on_delete=models.SET_NULL,null=True)
     rank = models.IntegerField(max_length = 1000)
     Class = models.ForeignKey(Classes, related_name="class",on_delete=models.SET_NULL,null=True)
+    def __str__(self):  # Python 3: def __str__(self):
+        return self.Class.Class_Name
     

@@ -1,71 +1,86 @@
 !!! 5
 <!DOCTYPE HTML>
 html
-	include crush/includes/head
-	include crush/includes/nav_4
-	title Block x Block
-	body(style="background-color: #BAEFFF; padding-top: 20px; padding-left: 20px;")
-		.row(style="padding-left:20px;")
-			h2 Welcome 
-			h1(style="display: inline;")#{School.school_profile.username}
-			br
-			br
-			br
-			h3 #{Entered_Fraction} Students have entered their preferences
-			br
-			br
-			.accordion(id="accordion_2")
-				if done_and_sorted.items
-					each i in done_and_sorted.items
-						.accordion-group
-							.accordion-heading
-								|<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#_{{i.0.Class_Name|slugify}}" style="text-decoration: none;">{{i.0.Class_Name}} <div style="padding-left: 20px; display: inline;">{{i.0.Teacher}}</div> <div class="pull-right" style = "display:inline;" >Max Occupancy : {{i.0.Max_Occupancy}}</div></a>
-								|	<div id="_{{i.0.Class_Name|slugify}}" class="accordion-body collapse in">
-								|		<div class="accordion-inner">
-								|		{% for o in i.1 %}
-								|			{{o.user_profile.username}}
-								|			<div class="pull-right">
-								|			{{o.Class_chosen.rank|add:1}}
-								|			</div>	
-								|				<br>
-								|		{% endfor %}
-								| 	</div>
-								|	</div>
-				
-		#addClassModal(class="modal hide fade", tabindex="-1", role = "dialogue", aria-labelledby="myModalLabel",alt="add class")
-			.modal-header
-				btn.pull-right(class='close',data-dismiss="modal",aria-hidden="true") x
-				h1(style="text-align:left") Add A Class
-			.modal-body(style="text-align: left")
-				form(action="addClass/", method="post", id="addClass",name = "addClass"){% csrf_token %}
-					input(class="span4",type ="text", required, placeholder="Class Name",name="ClassName",id="ClassName",required="true",maxlength="100")
-					input(class="span1",type="number", name = "MO",min="1", max="300",required = "true")
-					br
-					textarea.form-control.span7(placeholder="Class Description", name="ClassDescription",id="ClassDescription",rows="4", required = "true", maxlength=1000)
-					br
-					input.span7(placeholder="Teacher Name", name="Teacher",id="Teacher",required = "true", maxlength=20)
-					br
-					
-					.modal-footer
-						input.btn-Gret(type="submit", value = "Add")
-		#addStudentsModal(class="modal hide fade", tabindex="-1", role = "dialogue", aria-labelledby="myModalLabel",alt="add class")
-			.modal-header
-				btn.pull-right(class='close',data-dismiss="modal",aria-hidden="true") x
-				h1(style="text-align:left") Add Students
-			.modal-body(style="text-align: left")
-				form(action="addStudents/", method="post", id="addStudents",name = "addStudents",enctype="multipart/form-data"){% csrf_token %}
+  include crush/includes/head
+  include crush/includes/nav_4
+  title Block x Block
+  script
+    $(document).ready(function() {
+      {% for o in Students %}
+        {% for j in Preferences.items %}
+          {% if j.0 == o %}
+            var items = [];
+            {% for k in j.1 %}
+              items.push( "{{k}}" );
+            {% endfor %}
+            var {{o.user_profile.username|slugify}} = '<h10>'+items.join('  ,  ')+'</h10>' ;
+          {% endif %}
+        {% endfor %}
+        $("##{o.user_profile.username|slugify}").popover({trigger: "hover",html:true, container: 'body', content:{{o.user_profile.username|slugify}}});
+      {% endfor %}
+    });
+  body(style="background-color: #BAEFFF; padding-top: 20px; padding-left: 20px;")
+    .row(style="padding-left:20px;")
+      h2 Welcome 
+      h1(style="display: inline;")#{School.school_profile.username}
+      br
+      br
+      br
+      h3 #{Entered_Fraction} Students have entered their preferences
+      br
+      br
+      .accordion(id="accordion_2")
+        if done_and_sorted.items
+          each i in done_and_sorted.items
+            .accordion-group
+              .accordion-heading
+                |<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#_{{i.0.Class_Name|slugify}}" style="text-decoration: none;">{{i.0.Class_Name}} <div style="padding-left: 20px; display: inline;">{{i.0.Teacher}}</div> <div class="pull-right" style = "display:inline;" >Max Occupancy : {{i.0.Max_Occupancy}}</div></a>
+                |	<div id="_{{i.0.Class_Name|slugify}}" class="accordion-body collapse in">
+                |		<div class="accordion-inner">
+                |		{% for o in i.1 %}
+                |			<a style= "text-decoration:none; color:#000000;" id="{{o.user_profile.username|slugify}}">{{o.user_profile.username}}</a>
+                |			<div class="pull-right">
+                |			{{o.Class_chosen.rank|add:1}}
+                |			</div>	
+                |				<br>
+                |		{% endfor %}
+                | 	</div>
+                |	</div>
 
-					h9 Please upload the spreadsheet containing student names and passwords
-					h9 with names in column a and passwords in column b.
-					br
-					br
-					br
-					input(type="file",required,name="spreadsheet",id="spreadsheet", accept=".csv")
-					br
-					br
-					br
-					input.pull-right.btn-Gret(type="submit", value = "Add")
-		form(action="run_the_sort/", method="post", id="addClass",name = "addClass",enctype="multipart/form-data"){% csrf_token %}
-			input.btn-Gret(type="submit", value = "Sort the students (Don't worry you can run this multiple times)", id= "submit", name = "submit", style = "margin-bottom : 50px;")
-	
-					
+    #addClassModal(class="modal hide fade", tabindex="-1", role = "dialogue", aria-labelledby="myModalLabel",alt="add class")
+      .modal-header
+        btn.pull-right(class='close',data-dismiss="modal",aria-hidden="true") x
+        h1(style="text-align:left") Add A Class
+      .modal-body(style="text-align: left")
+        form(action="addClass/", method="post", id="addClass",name = "addClass"){% csrf_token %}
+          input(class="span4",type ="text", required, placeholder="Class Name",name="ClassName",id="ClassName",required="true",maxlength="100")
+          input(class="span1",type="number", name = "MO",min="1", max="300",required = "true")
+          br
+          textarea.form-control.span7(placeholder="Class Description", name="ClassDescription",id="ClassDescription",rows="4", required = "true", maxlength=1000)
+            br
+          input.span7(placeholder="Teacher Name", name="Teacher",id="Teacher",required = "true", maxlength=20)
+          br
+
+          .modal-footer
+            input.btn-Gret(type="submit", value = "Add")
+    #addStudentsModal(class="modal hide fade", tabindex="-1", role = "dialogue", aria-labelledby="myModalLabel",alt="add class")
+      .modal-header
+        btn.pull-right(class='close',data-dismiss="modal",aria-hidden="true") x
+        h1(style="text-align:left") Add Students
+      .modal-body(style="text-align: left")
+        form(action="addStudents/", method="post", id="addStudents",name = "addStudents",enctype="multipart/form-data"){% csrf_token %}
+
+          h9 Please upload the spreadsheet containing student names and passwords
+          h9 with names in column a and passwords in column b.
+          br
+          br
+          br
+          input(type="file",required,name="spreadsheet",id="spreadsheet", accept=".csv")
+          br
+          br
+          br
+          input.pull-right.btn-Gret(type="submit", value = "Add")
+    form(action="run_the_sort/", method="post", id="addClass",name = "addClass",enctype="multipart/form-data"){% csrf_token %}
+      input.btn-Gret(type="submit", value = "Sort the students (Don't worry you can run this multiple times)", id= "submit", name = "submit", style = "margin-bottom : 50px;")
+
+

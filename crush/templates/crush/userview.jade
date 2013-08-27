@@ -1,7 +1,5 @@
 <!DOCTYPE HTML>
 
-html<!DOCTYPE HTML>
-
 html
   .head
     include crush/includes/head
@@ -19,8 +17,17 @@ html
         $("#close-button").on("click", function(e) {
           $("#success-alert").hide();
         });
-        
-
+        {% for o in classes %}
+          var {{o.Class_Name|cut:' '|cut:'.'}} = '<h10> #{o.Class_Description|escapejs|cut:'.'} </h10>' ;
+          $("##{o.Class_Name|slugify}").popover({trigger: "hover", content: {{o.Class_Name|cut:' '|cut:'.'}}, html:true , title: '{{o.Teacher|escapejs}}' });
+        {% endfor %}
+        function idsToArray(ids) {
+          var values = [];
+          for(var i=0; i<ids.length; i++) {
+            values.push($('#'+ids[i]).attr("name"));
+          }
+          return values;
+        }
         $("#submit").on("click", function(e){
           if(changeCount>1) 
             $("#alert-body").html("You preferences have been changed!");
@@ -29,6 +36,7 @@ html
           $("#success-alert").show();
           var postUrl = "pref_reg/";
           var prefs = $("#sortable").sortable("toArray");
+          prefs = idsToArray(prefs);
           var dataString = prefs.join(',');
           var data = {"data": dataString};
           $.post(postUrl, data);
@@ -47,6 +55,6 @@ html
       ul(id="sortable", name="sortable",style="margin-top: 50px; margin-left: 100px")
         if classes
           each classes in classes
-            li(class="ui-stat-default",name= "#{classes.Class_Name}", id="#{classes.Class_Name}")#{classes.Class_Name}
-      input.btn-Gret(type="submit", value = "Submit", id= "submit", name = "submit", style = "margin-left:105px")
+            li(class="ui-stat-default",name= "#{classes.Class_Name}", id="{{classes.Class_Name|slugify}}", rel= "popover",value="#{classes.Class_Name}")#{classes.Class_Name}
+      input.btn-Gret(type="submit", value = "Submit", id= "submit", name = "submit", style = "margin-left:105px; margin-bottom:60px; margin-top:20px;")
 

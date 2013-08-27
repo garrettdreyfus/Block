@@ -67,6 +67,11 @@ def school_profile(request):
     not_entered = []
     Students = User_profile.objects.filter(School=School)
     done_and_sorted = {}
+    Preferences={}
+    for student in Students:
+        Preferences[student] = [] 
+        for i in Preference.objects.filter(student = student):
+            Preferences[student].append((i.Class.Class_Name))
     for i in Students:
         if len(Preference.objects.filter(student=i)) == 0:
             not_entered.append(i)
@@ -74,9 +79,8 @@ def school_profile(request):
     for i in Students: 
         if i.Class_chosen!=None:
             done_and_sorted[i.Class_chosen.Class].append(i)
-    print done_and_sorted
     Entered_Fraction = str(len(Students)-len(not_entered)) + ' / ' + str(len(Students))
-    return render(request, 'crush/school_home.jade', {'School':School,'Students':Students,'Entered_Fraction':Entered_Fraction,'done_and_sorted':done_and_sorted})
+    return render(request, 'crush/school_home.jade', {'School':School,'Students':Students,'Entered_Fraction':Entered_Fraction,'done_and_sorted':done_and_sorted,'Preferences':Preferences})
     
 def school_access(request):
     SchoolInfo = request.POST
@@ -146,6 +150,7 @@ def pref_reg(request):
     dataString = request.POST["data"]
     dataString = dataString.split(',')
     p=0
+    print dataString
     if Preference.objects.filter(student = request.user) != None:
         existing = Preference.objects.filter(student = User_profile.objects.get(user_profile=request.user)).delete()
     for classname in dataString:
@@ -197,13 +202,14 @@ def switch(sort, preferenceDict, request):
             for i in preferenceDict[student_1]: prefs_1.append(i.Class)
             prefs_2 = []
             for i in preferenceDict[student_2]: prefs_2.append(i.Class)
-            current_score = prefs_1.index(class_1) + prefs_2.index(class_2)
-            potential_score = prefs_1.index(class_2) + prefs_2.index(class_1)
-            if potential_score < current_score:
-                sort[class_1].remove(student_1)
-                sort[class_2].remove(student_2)
-                sort[class_1].append(student_2)
-                sort[class_2].append(student_1)
+            if class_1 in prefs_1 and class_1 in prefs_2 and class_2 in prefs_1 and class_2 in prefs_2:
+                current_score = prefs_1.index(class_1) + prefs_2.index(class_2)
+                potential_score = prefs_1.index(class_2) + prefs_2.index(class_1)
+                if potential_score < current_score:
+                    sort[class_1].remove(student_1)
+                    sort[class_2].remove(student_2)
+                    sort[class_1].append(student_2)
+                    sort[class_2].append(student_1)
     return sort
 def run_the_sort (request):
     
