@@ -26,6 +26,9 @@ def register(request):
     Password = SchoolInfo["SchoolPassword_Reg"]
     Zip_code = SchoolInfo["Zip_Reg"]
     Email = SchoolInfo["Email"]
+    if User.objects.filter(username = Username).count()>0:
+        return HttpResponse("Your username is not unique! Try another one")
+
     Usr = User.objects.create_user(Username, Email, Password)
     Usr.save()
     School = SchoolProfile(
@@ -53,7 +56,8 @@ def user_access(request):
             
             return HttpResponseRedirect(reverse('crush:userview'))
     else:
-        return HttpResponseRedirect(reverse('crush:index'))
+        return HttpResponse("Password incorrect! <a href=\"crush\">Go back and try again</a>");
+
 def userview(request):
     usr = request.user
     Student = User_profile.objects.get(user_profile=usr)
