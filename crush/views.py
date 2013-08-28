@@ -266,6 +266,7 @@ def change_prefs(request):
     p.save()
     usr.Class_chosen = p
     usr.Locked = True
-    usr.save() 
+    usr.save()
+    return HttpResponse("Success!");
     
 

@@ -13,12 +13,20 @@ html
             {% for k in j.1 %}
               items.push( "{{k}}" );
             {% endfor %}
-            var {{o.user_profile.username|slugify}} = '<h10>'+items.join('  ,  ')+'</h10>' ;
+            var {{o.user_profile.username|slugify}} = '<h10><a href="#" student="{{o.user_profile.username|slugify}}" class="changeClass">'+items.join(',</a> <a href="#" class="changeClass">')+' </a></h10>' ;
           {% endif %}
         {% endfor %}
         $("##{o.user_profile.username|slugify}").popover({trigger: "hover",html:true, container: 'body', content:{{o.user_profile.username|slugify}}});
       {% endfor %}
     });
+
+    $(document).on("click", ".changeClass", function() {
+      $.post("school_home/change_prefs/", {new_class:$(this).html(), student:$(this).attr("student")},
+        function(result) {
+          alert(result);
+        });
+    });
+
   body(style="background-color: #BAEFFF; padding-top: 20px; padding-left: 20px;")
     .row(style="padding-left:20px;")
       h2 Welcome 
