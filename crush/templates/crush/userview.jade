@@ -38,7 +38,7 @@ html
           var prefs = $("#sortable").sortable("toArray");
           prefs = idsToArray(prefs);
           var dataString = prefs.join(',');
-          var data = {"data": dataString};
+          var data = {"data": dataString,csrfmiddlewaretoken:'{{csrf_token}}' };
           $.post(postUrl, data);
         });
       });
