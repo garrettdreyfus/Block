@@ -21,7 +21,7 @@ html
     });
 
     $(document).on("click", ".changeClass", function() {
-      $.post("change_prefs/", {new_class:$(this).html(), student:$(this).attr("student")},
+      $.post("change_prefs/", {new_class:$(this).html(), usr:request.user},
         function(result) {
           alert(result);
         });

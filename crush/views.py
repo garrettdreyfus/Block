@@ -246,9 +246,8 @@ def usernameVal(request):
     
 def change_prefs(request):
     new_class = request.POST["new_class"]
-    student = request.POST["student"]
-    h = User.objects.get(username = student)
-    usr = User_profile.objects.get(user_profile = h )
+    student = request.POST["usr"]
+    usr = User_profile.objects.get(user_profile = student )
     preference = Preference.objects.filter(student=usr)
     final_pref = None
     for i in preference:
