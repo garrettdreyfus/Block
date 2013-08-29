@@ -1,5 +1,9 @@
 # Django settings for crushrank project.
+import os
+import sys
 
+PROJECT_ROOT = os.path.dirname(__file__)
+sys.path.insert(0, os.path.join(PROJECT_ROOT, 'appsfolder'))
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -16,7 +20,7 @@ DATABASES = {
         # The following settings are not used with sqlite3:
         'USER': 'root',
         'PASSWORD': 'root',
-        'HOST': '/Applications/MAMP/tmp/mysql/mysql.sock',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
+        'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
         'PORT': '',                      # Set to empty string for default.
     }
 }
@@ -126,7 +130,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'crush',
     'System',
-    'south',
+    #'south',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
@@ -136,6 +140,8 @@ INSTALLED_APPS = (
 # the site admins on every HTTP 500 error when DEBUG=False.
 # See http://docs.djangoproject.com/en/dev/topics/logging for
 # more details on how to customize your logging configuration.
+
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -162,8 +168,9 @@ LOGGING = {
 
 
 # Parse database configuration from $DATABASE_URL
-#import dj_database_url
-#DATABASES['crush'] =  dj_database_url.config()
+
+import dj_database_url
+DATABASES['default'] =  dj_database_url.config()
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
