@@ -15,7 +15,10 @@ urlpatterns = patterns('',
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
+<<<<<<< HEAD
 	url(r'^', include('crush.urls', namespace="crush")),
+=======
+	url(r'^crush/', include('crush.urls', namespace="crush")),
+>>>>>>> parent of daa5f92... AYAYAYYAYAY
     url(r'^admin/', include(admin.site.urls)),
-    
 )
