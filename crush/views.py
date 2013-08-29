@@ -17,7 +17,7 @@ def index(request):
 def about(request):
 	return render(request, 'crush/about.jade')
 def registration(request):
-	return render(request, 'registration.jade/')
+	return render(request, 'registration.jade')
 def school_home(request):
 	return render(request, 'crush/school_home.jade')
 def register(request):
