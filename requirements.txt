@@ -26,7 +26,6 @@ psycopg2==2.4.6
 py2app==0.6.3
 pyOpenSSL==0.13
 pyjade==2.0.2
-pymc==2.2
 pyobjc-core==2.3.2a0
 pyobjc-framework-AddressBook==2.3.2a0
 pyobjc-framework-AppleScriptKit==2.3.2a0
