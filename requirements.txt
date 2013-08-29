@@ -25,7 +25,6 @@ pika==0.9.13
 psycopg2==2.4.6
 py2app==0.6.3
 pyjade==2.0.2
-pyobjc-core==2.3.2a0
 pyparsing==1.5.7
 python-dateutil==1.5
 pytz==2013b
