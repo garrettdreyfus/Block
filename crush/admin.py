@@ -1,5 +1,5 @@
 from django.contrib import admin
-from edit.models import *
+from System.models import *
 
 admin.site.register(Classes)
 admin.site.register(Preference)
