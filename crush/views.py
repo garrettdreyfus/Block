@@ -13,13 +13,13 @@ from operator import *
 
 
 def index(request):
-	return render(request, 'crush/index.jade')
+	return render(request, '/index.jade/')
 def about(request):
-	return render(request, 'crush/about.jade')
+	return render(request, '/about.jade/')
 def registration(request):
-	return render(request, 'registration.jade')
+	return render(request, '/registration.jade/')
 def school_home(request):
-	return render(request, 'crush/school_home.jade')
+	return render(request, '/school_home.jade/')
 def register(request):
     SchoolInfo = request.POST
     Username = SchoolInfo["SchoolName_Reg"]
@@ -56,7 +56,7 @@ def user_access(request):
             
             return HttpResponseRedirect(reverse('crush:userview'))
     else:
-        return HttpResponse("Password incorrect! <a href=\"crush\">Go back and try again</a>");
+        return HttpResponse("Password incorrect! <a href=\"\">Go back and try again</a>");
 
 def userview(request):
     usr = request.user
