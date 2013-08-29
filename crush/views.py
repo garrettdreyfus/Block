@@ -13,7 +13,7 @@ from operator import *
 
 
 def index(request):
-	return render(request, 'index.jade/')
+	return render(request, 'crush/index.jade')
 def about(request):
 	return render(request, 'about.jade/')
 def registration(request):
