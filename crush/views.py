@@ -15,11 +15,11 @@ from operator import *
 def index(request):
 	return render(request, 'crush/index.jade')
 def about(request):
-	return render(request, 'about.jade/')
+	return render(request, 'crush/about.jade')
 def registration(request):
-	return render(request, 'registration.jade/')
+	return render(request, 'crush/registration.jade')
 def school_home(request):
-	return render(request, 'school_home.jade/')
+	return render(request, 'crush/school_home.jade')
 def register(request):
     SchoolInfo = request.POST
     Username = SchoolInfo["SchoolName_Reg"]
