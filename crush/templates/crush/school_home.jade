@@ -63,6 +63,7 @@ html
         form(action="addClass/", method="post", id="addClass",name = "addClass"){% csrf_token %}
           input(class="span4",type ="text", required, placeholder="Class Name",name="ClassName",id="ClassName",required="true",maxlength="100")
           input(class="span1",type="number", name = "MO",min="1", max="300",required = "true")
+          input(class="span2",type="text", placeholder="Grade",name = "Grade",min="6", max="8",required = "true")
           br
           textarea.form-control.span7(placeholder="Class Description", name="ClassDescription",id="ClassDescription",rows="4", required = "true", maxlength=1000)
             br

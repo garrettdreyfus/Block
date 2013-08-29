@@ -14,6 +14,7 @@ class Classes(models.Model):
     Class_Name= models.CharField(max_length=100, null=False)
     Class_Description= models.CharField(max_length=1000, null=True)
     Max_Occupancy = models.IntegerField(max_length=300)
+    Grade = models.CharField(max_length=1000)
     Teacher = models.CharField(max_length=20)
     def _unicode_(self):
         return (self.Class_Name)
@@ -21,6 +22,7 @@ class User_profile(models.Model):
     user_profile = models.OneToOneField(User,related_name='user_profile')
     School = models.ForeignKey(SchoolProfile, related_name="School", null=True)
     Class_chosen = models.OneToOneField('Preference', related_name="class_chosen", null=True, on_delete=models.SET_NULL)
+    Grade = models.IntegerField(max_length=1000)
     Locked = models.BooleanField( default=False)
     def _unicode_(self):
         return (self.profile.username)

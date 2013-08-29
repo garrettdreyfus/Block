@@ -62,7 +62,7 @@ def userview(request):
     usr = request.user
     Student = User_profile.objects.get(user_profile=usr)
     School = Student.School
-    classes = Classes.objects.filter(School=School)
+    classes = Classes.objects.filter(Grade=Student.Grade) # filter(School=School).filter(Grade=Student.Grade)
     return render(request, 'crush/userview.jade', {'classes':classes})
     
 def school_profile(request):
@@ -110,13 +110,14 @@ def addClass(request):
     Name = ClassInfo["ClassName"]
     MO = ClassInfo["MO"]
     teacher = ClassInfo["Teacher"]
+    grade = ClassInfo["Grade"]
     Class = Classes(
         School=School,
         Class_Name=Name,
         Class_Description=Description,
         Max_Occupancy=MO,
         Teacher=teacher,
-        
+        Grade=grade,    
     )
     Class.save()
     return HttpResponseRedirect(reverse('crush:school_profile'))
@@ -127,14 +128,17 @@ def addStudents(request):
     usr = request.user
     school = SchoolProfile.objects.get(school_profile=usr)
     rowsp= csvfile.split('\r')
-    rowsp = rowsp[0].split('\n')
+    # rowsp = rowsp[0].split('\n')
+    print rowsp
     rows=[]
-    for i in rowsp:
-        rows.append(i.split(','))
-    for row in rows:
+    ## for i in rowsp:
+    ##     rows.append(i.split(','))
+    print rows
+    for row in rowsp:
+        row = row.split(',')
+        print row
         if len(row)==0:
-             return HttpResponseRedirect(reverse('crush:school_profile'))
-             
+             return HttpResponseRedirect(reverse('crush:school_profile'))    
         username = row[1].lower() + row[0].lower()
         if len(User.objects.filter(username= username))==0:
             user = User.objects.create_user(username)
@@ -145,6 +149,7 @@ def addStudents(request):
             student = User_profile(
                 user_profile=user,
                 School = school,
+                Grade = row[3]
             )
             student.save()
     return HttpResponseRedirect(reverse('crush:school_profile'))
@@ -266,7 +271,5 @@ def change_prefs(request):
     p.save()
     usr.Class_chosen = p
     usr.Locked = True
-    usr.save()
-    return HttpResponse("Success!");
-    
-
+    usr.save() 
+    return HttpResponse("Success!")
