@@ -13,13 +13,13 @@ from operator import *
 
 
 def index(request):
-	return render(request, 'crush/index.jade')
+	return render(request, 'index.jade')
 def about(request):
-	return render(request, 'crush/about.jade')
+	return render(request, 'about.jade')
 def registration(request):
-	return render(request, 'crush/registration.jade')
+	return render(request, 'registration.jade')
 def school_home(request):
-	return render(request, 'crush/school_home.jade')
+	return render(request, 'school_home.jade')
 def register(request):
     SchoolInfo = request.POST
     Username = SchoolInfo["SchoolName_Reg"]
@@ -63,7 +63,7 @@ def userview(request):
     Student = User_profile.objects.get(user_profile=usr)
     School = Student.School
     classes = Classes.objects.filter(School=School)
-    return render(request, 'crush/userview.jade', {'classes':classes})
+    return render(request, '/userview.jade', {'classes':classes})
     
 def school_profile(request):
     usr = request.user
@@ -84,7 +84,7 @@ def school_profile(request):
         if i.Class_chosen!=None:
             done_and_sorted[i.Class_chosen.Class].append(i)
     Entered_Fraction = str(len(Students)-len(not_entered)) + ' / ' + str(len(Students))
-    return render(request, 'crush/school_home.jade', {'School':School,'Students':Students,'Entered_Fraction':Entered_Fraction,'done_and_sorted':done_and_sorted,'Preferences':Preferences})
+    return render(request, 'school_home.jade', {'School':School,'Students':Students,'Entered_Fraction':Entered_Fraction,'done_and_sorted':done_and_sorted,'Preferences':Preferences})
     
 def school_access(request):
     SchoolInfo = request.POST
