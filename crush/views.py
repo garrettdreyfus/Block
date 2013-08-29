@@ -15,7 +15,7 @@ from operator import *
 def index(request):
 	return render(request, 'crush/index.jade')
 def about(request):
-	return render(request, 'crush/about.jade')
+	return render(request, 'about.jade')
 def registration(request):
 	return render(request, 'crush/registration.jade')
 def school_home(request):
