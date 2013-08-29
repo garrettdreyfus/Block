@@ -18,5 +18,5 @@ urlpatterns = patterns('',
     url(r'^school_profile/run_the_sort/$', views.run_the_sort, name='run_the_sort'),
     url(r'^user_access/$', views.user_access, name = 'user_access'),
     url(r'^userview/pref_reg/$', views.pref_reg, name = 'pref_reg'),
-    url(r'^school_home/change_prefs/$', views.change_prefs, name='change_prefs')
+    url(r'^school_profile/school_home/change_prefs/$', views.change_prefs, name='change_prefs')
 )
