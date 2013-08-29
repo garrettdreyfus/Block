@@ -16,7 +16,7 @@ html
             var {{o.user_profile.username|slugify}} = '<h10><a href="#" student="{{o.user_profile.username|slugify}}" class="changeClass">'+items.join(',</a> <a href="#" class="changeClass">')+' </a></h10>' ;
           {% endif %}
         {% endfor %}
-        $("##{o.user_profile.username|slugify}").popover({trigger: "hover",html:true, container: 'body', content:{{o.user_profile.username|slugify}}});
+        $("##{o.user_profile.username|slugify}").popover({trigger: "click",html:true, container: 'body', content:{{o.user_profile.username|slugify}}});
       {% endfor %}
     });
 
