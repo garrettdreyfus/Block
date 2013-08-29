@@ -140,9 +140,7 @@ INSTALLED_APPS = (
 # the site admins on every HTTP 500 error when DEBUG=False.
 # See http://docs.djangoproject.com/en/dev/topics/logging for
 # more details on how to customize your logging configuration.
-Parse database configuration from $DATABASE_URL
-import dj_database_url
-DATABASES['crush'] =  dj_database_url.config()
+
 
 LOGGING = {
     'version': 1,
