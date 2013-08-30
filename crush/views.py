@@ -200,22 +200,23 @@ def switch(sort, preferenceDict, request):
     for i in sort.values(): new_sort+=i
     reverse_lookup = reverse_it(sort)
     for student_1 in new_sort[:-1]:
+        for student_2 in new_sort[new_sort.index(student_1):]:
+            class_1 = reverse_lookup[student_1]
+            class_2 = reverse_lookup[student_2]
+            prefs_1 = []
+            for i in preferenceDict[student_1]: prefs_1.append(i.Class)
+            prefs_2 = []
+            for i in preferenceDict[student_2]: prefs_2.append(i.Class)
+            if class_1 in prefs_1 and class_1 in prefs_2 and class_2 in prefs_1 and class_2 in prefs_2:
+                current_score = prefs_1.index(class_1) + prefs_2.index(class_2)
+                potential_score = prefs_1.index(class_2) + prefs_2.index(class_1)
+                if potential_score < current_score:
+                    sort[class_1].remove(student_1)
+                    sort[class_2].remove(student_2)
+                    sort[class_1].append(student_2)
+                    sort[class_2].append(student_1)
         if student_1.Locked == False and student_2.Locked == False:
-            for student_2 in new_sort[new_sort.index(student_1):]:
-                class_1 = reverse_lookup[student_1]
-                class_2 = reverse_lookup[student_2]
-                prefs_1 = []
-                for i in preferenceDict[student_1]: prefs_1.append(i.Class)
-                prefs_2 = []
-                for i in preferenceDict[student_2]: prefs_2.append(i.Class)
-                if class_1 in prefs_1 and class_1 in prefs_2 and class_2 in prefs_1 and class_2 in prefs_2:
-                    current_score = prefs_1.index(class_1) + prefs_2.index(class_2)
-                    potential_score = prefs_1.index(class_2) + prefs_2.index(class_1)
-                    if potential_score < current_score:
-                        sort[class_1].remove(student_1)
-                        sort[class_2].remove(student_2)
-                        sort[class_1].append(student_2)
-                        sort[class_2].append(student_1)
+
     return sort
 def run_the_sort (request):
     
