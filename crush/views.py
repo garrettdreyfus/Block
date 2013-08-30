@@ -54,7 +54,7 @@ def user_access(request):
         if usr.is_active:
             login(request, usr)
             
-            return HttpResponseRedirect(reverse('userview'))
+            return HttpResponseRedirect(reverse('crush:userview'))
     else:
         return HttpResponse("Password incorrect! <a href=\"\">Go back and try again</a>");
 
