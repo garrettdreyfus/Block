@@ -42,8 +42,8 @@ def register(request):
     if usr is not None:
         if usr.is_active:
             login(request, usr)
-            return HttpResponseRedirect(reverse('crush:school_profile'))
-    return HttpResponseRedirect(reverse('crush:index'))
+            return HttpResponseRedirect(reverse('school_profile'))
+    return HttpResponseRedirect(reverse('index'))
 
 def user_access(request):
     StudentInfo = request.POST
@@ -54,7 +54,7 @@ def user_access(request):
         if usr.is_active:
             login(request, usr)
             
-            return HttpResponseRedirect(reverse('crush:userview'))
+            return HttpResponseRedirect(reverse('userview'))
     else:
         return HttpResponse("Password incorrect! <a href=\"\">Go back and try again</a>");
 

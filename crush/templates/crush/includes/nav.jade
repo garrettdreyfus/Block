@@ -1,4 +1,4 @@
-//.head
+.head
 	style(type="text/css")   
 		.navbar-inner {
 			background-color: #B6C0D2;
@@ -11,8 +11,7 @@
 
 .navbar.navbar-fixed-bottom
 	.navbar-inner
-		a.brand(style="padding-left:3%; margin-top:1%; margin-bottom:0.5%; font-size:xx-large; color: #000000; ", href=" {% url 'index' %} ") Block x Block
-		a.brand(style="margin-left:20px; margin-top:1%; margin-bottom:0.5%;font-size:xx-large; color: #000000;", href="{% url 'about' %}") About
-		a.brand(style="margin-left:20px; margin-top:1%; margin-bottom:0.5%;font-size:xx-large; color: #000000; float:right;", href="{% url 'register' %}") Register
+		a.brand(style="padding-left:3%; margin-top:1%; margin-bottom:0.5%; font-size:xx-large; color: #000000; ", href="/") Block x Block
+		a.brand(style="margin-left:20px; margin-top:1%; margin-bottom:0.5%;font-size:xx-large; color: #000000;", href="/about/") About
+		a.brand(style="margin-left:20px; margin-top:1%; margin-bottom:0.5%;font-size:xx-large; color: #000000; float:right;", href="/registration/register") Register
 		
-//-
