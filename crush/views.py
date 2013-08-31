@@ -42,8 +42,8 @@ def register(request):
     if usr is not None:
         if usr.is_active:
             login(request, usr)
-            return HttpResponseRedirect(reverse('crush:school_profile'))
-    return HttpResponseRedirect(reverse('crush:index'))
+            return HttpResponseRedirect(reverse('school_profile'))
+    return HttpResponseRedirect(reverse('index'))
 
 def user_access(request):
     StudentInfo = request.POST
@@ -56,7 +56,7 @@ def user_access(request):
             
             return HttpResponseRedirect(reverse('crush:userview'))
     else:
-        return HttpResponse("Password incorrect! <a href=\"crush\">Go back and try again</a>");
+        return HttpResponse("Password incorrect! <a href=\"\">Go back and try again</a>");
 
 def userview(request):
     usr = request.user
@@ -206,9 +206,14 @@ def switch(sort, preferenceDict, request):
     for i in sort.values(): new_sort+=i
     reverse_lookup = reverse_it(sort)
     for student_1 in new_sort[:-1]:
+<<<<<<< HEAD
 	student_2 = student_1    
         if student_1.Locked == False and student_2.Locked == False:
             for student_2 in new_sort[new_sort.index(student_1):]:
+=======
+        for student_2 in new_sort[new_sort.index(student_1):]:
+            if student_1.Locked == False and student_2.Locked == False:
+>>>>>>> c00a21675633cdcc4092714d0dbbb9b345d641af
                 class_1 = reverse_lookup[student_1]
                 class_2 = reverse_lookup[student_2]
                 prefs_1 = []
@@ -253,9 +258,8 @@ def usernameVal(request):
     
 def change_prefs(request):
     new_class = request.POST["new_class"]
-    student = request.POST["student"]
-    h = User.objects.get(username = student)
-    usr = User_profile.objects.get(user_profile = h )
+    student = request.POST["usr"]
+    usr = User_profile.objects.get(user_profile = student )
     preference = Preference.objects.filter(student=usr)
     final_pref = None
     for i in preference:

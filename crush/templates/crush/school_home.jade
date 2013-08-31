@@ -16,12 +16,12 @@ html
             var {{o.user_profile.username|slugify}} = '<h10><a href="#" student="{{o.user_profile.username|slugify}}" class="changeClass">'+items.join(',</a> <a href="#" class="changeClass">')+' </a></h10>' ;
           {% endif %}
         {% endfor %}
-        $("##{o.user_profile.username|slugify}").popover({trigger: "hover",html:true, container: 'body', content:{{o.user_profile.username|slugify}}});
+        $("##{o.user_profile.username|slugify}").popover({trigger: "click",html:true, container: 'body', content:{{o.user_profile.username|slugify}}});
       {% endfor %}
     });
 
     $(document).on("click", ".changeClass", function() {
-      $.post("school_home/change_prefs/", {new_class:$(this).html(), student:$(this).attr("student")},
+      $.post("change_prefs/", {new_class:$(this).html(), usr:$(this).attr("student"),},
         function(result) {
           alert(result);
         });

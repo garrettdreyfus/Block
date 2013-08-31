@@ -19,7 +19,7 @@ html
         });
         {% for o in classes %}
           var {{o.Class_Name|cut:' '|cut:'.'}} = '<h10> #{o.Class_Description|escapejs|cut:'.'} </h10>' ;
-          $("##{o.Class_Name|slugify}").popover({trigger: "hover", content: {{o.Class_Name|cut:' '|cut:'.'}}, html:true , title: '{{o.Teacher|escapejs}}' });
+          $("##{o.Class_Name|slugify}").popover({trigger: "click", content: {{o.Class_Name|cut:' '|cut:'.'}}, html:true , title: '{{o.Teacher|escapejs}}' });
         {% endfor %}
         function idsToArray(ids) {
           var values = [];
