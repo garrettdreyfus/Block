@@ -206,14 +206,8 @@ def switch(sort, preferenceDict, request):
     for i in sort.values(): new_sort+=i
     reverse_lookup = reverse_it(sort)
     for student_1 in new_sort[:-1]:
-<<<<<<< HEAD
-	student_2 = student_1    
-        if student_1.Locked == False and student_2.Locked == False:
-            for student_2 in new_sort[new_sort.index(student_1):]:
-=======
         for student_2 in new_sort[new_sort.index(student_1):]:
             if student_1.Locked == False and student_2.Locked == False:
->>>>>>> c00a21675633cdcc4092714d0dbbb9b345d641af
                 class_1 = reverse_lookup[student_1]
                 class_2 = reverse_lookup[student_2]
                 prefs_1 = []
