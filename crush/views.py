@@ -8,7 +8,7 @@ from System.models import *
 from django import forms
 from crush.models import *
 from django.core.mail import send_mail
-import csv
+import csv, re
 from operator import *
 
 
@@ -138,8 +138,9 @@ def addStudents(request):
         row = row.split(',')
         print row
         if len(row)==0:
-             return HttpResponseRedirect(reverse('crush:school_profile'))    
+             return HttpResponseRedirect(reverse('crush:school_profile'))
         username = row[1].lower() + row[0].lower()
+	username = re.sub(r'\s', '', username)
         if len(User.objects.filter(username= username))==0:
             user = User.objects.create_user(username)
             user.set_password(row[2])
@@ -205,6 +206,7 @@ def switch(sort, preferenceDict, request):
     for i in sort.values(): new_sort+=i
     reverse_lookup = reverse_it(sort)
     for student_1 in new_sort[:-1]:
+	student_2 = student_1    
         if student_1.Locked == False and student_2.Locked == False:
             for student_2 in new_sort[new_sort.index(student_1):]:
                 class_1 = reverse_lookup[student_1]
