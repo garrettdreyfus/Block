@@ -8,6 +8,7 @@ from System.models import *
 from django import forms
 from crush.models import *
 from django.core.mail import send_mail
+from django.contrib import messages
 import csv, re
 from operator import *
 
@@ -56,7 +57,8 @@ def user_access(request):
             
             return HttpResponseRedirect(reverse('crush:userview'))
     else:
-        return HttpResponse("Password incorrect! <a href=\"\">Go back and try again</a>");
+        messages.add_message(request, messages.ERROR, 'Your username or password is invalid')
+        return HttpResponseRedirect(reverse('crush:index'))
 
 def userview(request):
     usr = request.user
@@ -100,7 +102,8 @@ def school_access(request):
             return HttpResponseRedirect(reverse('crush:school_profile'))
 
     else:
-        return HttpResponseRedirect(reverse('crush:index'))
+       messages.add_message(request, messages.ERROR, 'Your username or password is invalid')
+       return HttpResponseRedirect(reverse('crush:index'))
 
 def addClass(request):
     ClassInfo = request.POST

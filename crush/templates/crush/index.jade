@@ -6,6 +6,7 @@ html
   include crush/includes/nav
   title Block x Block
   body(style="width: 65%; height: 55%;background-color: #BAEFFF; position: absolute; top:0; bottom: 0; left: 0; right: 0; margin: auto;")
+    
     .row
       h1.pull-left(style="font-size:70px; vertical-align: top; padding-bottom: 5%;") Block x Block
     .row
@@ -25,4 +26,11 @@ html
         input.span3(type="password", required, placeholder="Password", name="StudentPassword", id= "StudentPassword")
         br
         input.btn-Gret(type="submit", value = "Login")
+    {% if messages %}
+    <div class="alert alert-error logerrors">
+    {% for message in messages %}
+    <p>{% if message.tags %} {% endif %}{{ message }}</p>
+    {% endfor %}
+    </div>
+    {% endif %}
 
