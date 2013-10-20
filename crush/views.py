@@ -46,6 +46,42 @@ def register(request):
             return HttpResponseRedirect(reverse('school_profile'))
     return HttpResponseRedirect(reverse('index'))
 
+def edit_class(request):
+    ClassInfo = request.POST
+    usr = request.user
+    School = School_Profile.objects.filter(school_profile=usr)
+    Description = ClassInfo["ClassDescription"]
+    Name = ClassInfo["ClassName"]
+    MO = ClassInfo["MO"]
+    teacher = ClassInfo["teacher"]
+    grade = ClassInfo["grade"]
+    if Classes.objects.get(class_name=Name) != None:
+        School_Profile.objects.filter(school_profile=usr).delete()
+    Class = Classes(
+        School=School,
+        Class_Name=Name,
+        Class_Description=Description,
+        Max_Occupancy=MO,
+        Teacher=teacher,
+        Grade=grade,
+    )
+    Class.save()
+    return HttpResponseRedirect(reverse('crush:school_profile'))
+def deleted(request):
+    # print "DELETED", request.POST
+    ident = ''
+    for key in request.POST.keys():
+        if request.POST[key] == 'Delete class':
+            ident = key
+    if ident != "":
+        c = Classes.objects.get(Class_Name=ident)
+	prefs = Preference.objects.filter(Class_id = c.id)
+	for p in prefs:
+	#	print "delete", p, p.student
+		p.delete()
+        c.delete()
+    return HttpResponseRedirect(reverse('crush:school_profile'))
+
 def user_access(request):
     StudentInfo = request.POST
     Username = StudentInfo["Username"]
@@ -69,6 +105,8 @@ def userview(request):
     
 def school_profile(request):
     usr = request.user
+    # School = User_profile.objects.get(user_id=usr)
+    print usr
     School = SchoolProfile.objects.get(school_profile=usr)
     not_entered = []
     Students = User_profile.objects.filter(School=School)

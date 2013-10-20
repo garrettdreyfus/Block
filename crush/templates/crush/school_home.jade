@@ -42,7 +42,10 @@ html
           each i in done_and_sorted.items
             .accordion-group
               .accordion-heading
-                |<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#_{{i.0.Class_Name|slugify}}" style="text-decoration: none;">{{i.0.Class_Name}} <div style="padding-left: 20px; display: inline;">{{i.0.Teacher}}</div> <div class="pull-right" style = "display:inline;" >Max Occupancy : {{i.0.Max_Occupancy}}</div></a>
+                |<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#_{{i.0.Class_Name|slugify}}" style="text-decoration: none;">{{i.0.Class_Name}} <div style="padding-left: 20px; display: inline;">{{i.0.Teacher}}</div> <div class="pull-right" style = "display:inline;" >Max Occupancy : {{i.0.Max_Occupancy}}</div></a><div class="pull-right" style = "display:inline;">
+                |<form action='deleted' method="post"/>{% csrf_token %}
+                |<input type="submit" value="Delete class" name="{{i.0.Class_Name}}" class="btn btn-primary btn-mini"/> </form>
+                |</div>
                 |	<div id="_{{i.0.Class_Name|slugify}}" class="accordion-body collapse in">
                 |		<div class="accordion-inner">
                 |		{% for o in i.1 %}
