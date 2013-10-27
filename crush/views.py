@@ -54,17 +54,14 @@ def Publish(request):
 				spamwriter.writerow([user.user_profile, what_class[user.id], "", better, rank+1])
 		else:
 			continue
-		
-		
-    ## x = requests.post(
-    ##     "https://api.mailgun.net/v2/iceblock.mailgun.org/messages",
-    ##     auth=("api", "key-99jb9qto5o4cgelo4zg90l9ki1my7d76"),
-    ##     files={"attachment": open("publish.csv")},
-    ##     data={"from": "Iceblock admin <justin.kaashoek@gmail.com>",
-    ##           "to": ["justin.kaashoek@gmail.com"],
-    ##           "subject": 'Final class assignments',
-    ##           "text":'Your final class assignments are attached'})
-    ## print x
+    x = requests.post(
+        "https://api.mailgun.net/v2/iceblock.mailgun.org/messages",
+        auth=("api", "key-99jb9qto5o4cgelo4zg90l9ki1my7d76"),
+        files={"attachment": open("publish.csv")},
+        data={"from": "Iceblock admin <justin.kaashoek@gmail.com>",
+              "to": ["justin.kaashoek@gmail.com"],
+              "subject": 'Final class assignments',
+              "text":'Your final class assignments are attached'})
     return HttpResponseRedirect(reverse('crush:school_profile'))
 def index(request):
 	return render(request, 'crush/index.jade')
