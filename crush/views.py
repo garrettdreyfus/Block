@@ -9,10 +9,63 @@ from django import forms
 from crush.models import *
 from django.core.mail import send_mail
 from django.contrib import messages
-import csv, re
+import csv, re, requests
 from operator import *
+# from paste.util import multidict
 
+def sorting(usr, School, Students):
+    done_and_sorted = {}
+    Preferences={}
+    for student in Students:
+        Preferences[student.id] = [] 
+        for i in Preference.objects.filter(student = student):
+            Preferences[student.id].append((i.Class.Class_Name))
+    for i in Classes.objects.filter(School=School):
+	    done_and_sorted[i]=[]
+    for i in Students: 
+        if i.Class_chosen!=None:
+            done_and_sorted[i.Class_chosen.Class].append(i)
+    return (done_and_sorted,Preferences)
 
+def Publish(request):
+    usr = request.user
+    School = SchoolProfile.objects.get(school_profile=usr)
+    Students = User_profile.objects.filter(School=School)
+    assignments = Preference.objects.all()
+    (done_and_sorted, Preferences) = sorting(usr, School, Students)
+    what_class = {}
+    gone_through = []
+    for c in done_and_sorted.keys():
+	    for user in done_and_sorted[c]:
+		    what_class[user.id] = c.Class_Name
+    with open('publish.csv', 'wb') as csvfile:
+        spamwriter = csv.writer(csvfile, delimiter=',',
+                                quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        spamwriter.writerow(['Student', 'Assignment', 'Homeroom', 'Preferences', 'Rank'])
+	for i in assignments:
+		if i.student_id not in gone_through:
+			gone_through.append(i.student_id)
+			q = Classes.objects.get(id=i.Class_id)
+			if i.student_id != None:
+				user = User_profile.objects.get(id=i.student_id)
+				better = Preferences[i.student_id]
+				rank = better.index(what_class[user.id])
+				better = "; ".join(better)
+				spamwriter.writerow([user.user_profile, what_class[user.id], "", better, rank+1])
+		else:
+			continue
+		
+		
+    ## x = requests.post(
+    ##     "https://api.mailgun.net/v2/iceblock.mailgun.org/messages",
+    ##     auth=("api", "key-99jb9qto5o4cgelo4zg90l9ki1my7d76"),
+    ##     files={"attachment": open("publish.csv")},
+    ##     data={"from": "Iceblock admin <justin.kaashoek@gmail.com>",
+    ##           "to": ["justin.kaashoek@gmail.com"],
+    ##           "subject": 'Final class assignments',
+    ##           "text":'Your final class assignments are attached'})
+    ## print x
+    return HttpResponseRedirect(reverse('crush:school_profile'))
 def index(request):
 	return render(request, 'crush/index.jade')
 def about(request):
@@ -68,7 +121,6 @@ def edit_class(request):
     Class.save()
     return HttpResponseRedirect(reverse('crush:school_profile'))
 def deleted(request):
-    # print "DELETED", request.POST
     ident = ''
     for key in request.POST.keys():
         if request.POST[key] == 'Delete class':
@@ -77,7 +129,6 @@ def deleted(request):
         c = Classes.objects.get(Class_Name=ident)
 	prefs = Preference.objects.filter(Class_id = c.id)
 	for p in prefs:
-	#	print "delete", p, p.student
 		p.delete()
         c.delete()
     return HttpResponseRedirect(reverse('crush:school_profile'))
@@ -105,24 +156,13 @@ def userview(request):
     
 def school_profile(request):
     usr = request.user
-    # School = User_profile.objects.get(user_id=usr)
-    print usr
-    School = SchoolProfile.objects.get(school_profile=usr)
     not_entered = []
+    School = SchoolProfile.objects.get(school_profile=usr)
     Students = User_profile.objects.filter(School=School)
-    done_and_sorted = {}
-    Preferences={}
-    for student in Students:
-        Preferences[student] = [] 
-        for i in Preference.objects.filter(student = student):
-            Preferences[student].append((i.Class.Class_Name))
+    (done_and_sorted, Preferences) = sorting(usr, School, Students)
     for i in Students:
         if len(Preference.objects.filter(student=i)) == 0:
             not_entered.append(i)
-    for i in Classes.objects.filter(School=School): done_and_sorted[i]=[]
-    for i in Students: 
-        if i.Class_chosen!=None:
-            done_and_sorted[i.Class_chosen.Class].append(i)
     Entered_Fraction = str(len(Students)-len(not_entered)) + ' / ' + str(len(Students))
     return render(request, 'crush/school_home.jade', {'School':School,'Students':Students,'Entered_Fraction':Entered_Fraction,'done_and_sorted':done_and_sorted,'Preferences':Preferences})
     
@@ -165,19 +205,15 @@ def addClass(request):
 def addStudents(request):
     csvfile = request.FILES['spreadsheet']
     csvfile = csvfile.read()
-    
     usr = request.user
     school = SchoolProfile.objects.get(school_profile=usr)
     rowsp= csvfile.split('\r')
     # rowsp = rowsp[0].split('\n')
-    print rowsp
     rows=[]
     ## for i in rowsp:
     ##     rows.append(i.split(','))
-    print rows
     for row in rowsp:
         row = row.split(',')
-        print row
         if len(row)==0:
              return HttpResponseRedirect(reverse('crush:school_profile'))
         username = row[1].lower() + row[0].lower()
@@ -201,7 +237,6 @@ def pref_reg(request):
     dataString = request.POST["data"]
     dataString = dataString.split(',')
     p=0
-    print dataString
     if Preference.objects.filter(student = request.user) != None:
         existing = Preference.objects.filter(student = User_profile.objects.get(user_profile=request.user)).delete()
     for classname in dataString:

@@ -57,7 +57,8 @@ html
                 |		{% endfor %}
                 | 	</div>
                 |	</div>
-
+      form(action='Publish', method="post", id="Publish",name = "Publish",enctype="multipart/form-data"){% csrf_token %}
+        input.btn-Gret(type="submit", value = "Publish assignments", id= "submit", name = "submit", style = "margin-bottom : 50px;")
     #addClassModal(class="modal hide fade", tabindex="-1", role = "dialogue", aria-labelledby="myModalLabel",alt="add class")
       .modal-header
         btn.pull-right(class='close',data-dismiss="modal",aria-hidden="true") x

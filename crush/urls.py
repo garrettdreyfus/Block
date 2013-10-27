@@ -19,5 +19,6 @@ urlpatterns = patterns('',
     url(r'^user_access/$', views.user_access, name = 'user_access'),
     url(r'^userview/pref_reg/$', views.pref_reg, name = 'pref_reg'),
     url(r'^school_home/change_prefs/$', views.change_prefs, name='change_prefs'),
-    url(r'^school_profile/deleted$', views.deleted, name='deleted'),                   
+    url(r'^school_profile/deleted$', views.deleted, name='deleted'),
+    url(r'^school_profile/Publish$', views.Publish, name='Publish'),                   
 )
