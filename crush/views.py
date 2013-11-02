@@ -99,31 +99,46 @@ def register(request):
 def edit_class(request):
     ClassInfo = request.POST
     usr = request.user
-    School = School_Profile.objects.filter(school_profile=usr)
+    oldName = ClassInfo["OldName"]
     Description = ClassInfo["ClassDescription"]
-    Name = ClassInfo["ClassName"]
     MO = ClassInfo["MO"]
-    teacher = ClassInfo["teacher"]
-    grade = ClassInfo["grade"]
-    if Classes.objects.get(class_name=Name) != None:
-        School_Profile.objects.filter(school_profile=usr).delete()
-    Class = Classes(
-        School=School,
-        Class_Name=Name,
-        Class_Description=Description,
-        Max_Occupancy=MO,
-        Teacher=teacher,
-        Grade=grade,
-    )
-    Class.save()
+    teacher = ClassInfo["Teacher"]
+    grade = ClassInfo["Grade"]
+    Name = ClassInfo["Class_Name"]
+    classes = []
+    for course in Classes.objects.all():
+	    classes.append(course.Class_Name)
+    print classes
+    if oldName not in classes:
+	    messages.add_message(request, messages.ERROR, 'The class in the old name field is incorrect')
+	    return HttpResponseRedirect(reverse('crush:school_profile'))
+    School = SchoolProfile.objects.get(school_profile=usr)
+    course = Classes.objects.get(Class_Name=oldName)
+    course.School=School
+    course.Class_Name = Name
+    course.Class_Description=Description
+    course.Max_Occupancy=MO
+    course.Teacher=teacher
+    course.Grade=grade
+    course.save()
+    ## Class = Classes(
+    ##     School=School,
+    ##     Class_Name=Name,
+    ##     Class_Description=Description,
+    ##     Max_Occupancy=MO,
+    ##     Teacher=teacher,
+    ##     Grade=grade,
+    ## )
+    ## Class.save()
     return HttpResponseRedirect(reverse('crush:school_profile'))
 def deleted(request):
-    ident = ''
+    print "MADE IT TO DELETED"
+    ident = request.POST
     for key in request.POST.keys():
         if request.POST[key] == 'Delete class':
             ident = key
-    if ident != "":
-        c = Classes.objects.get(Class_Name=ident)
+    if key != "":
+        c = Classes.objects.get(Class_Name=key)
 	prefs = Preference.objects.filter(Class_id = c.id)
 	for p in prefs:
 		p.delete()
@@ -137,8 +152,7 @@ def user_access(request):
     usr = authenticate(username=Username, password=Password)
     if usr is not None:
         if usr.is_active:
-            login(request, usr)
-            
+            login(request, usr)            
             return HttpResponseRedirect(reverse('crush:userview'))
     else:
         messages.add_message(request, messages.ERROR, 'Your username or password is invalid')

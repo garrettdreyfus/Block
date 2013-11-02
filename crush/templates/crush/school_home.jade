@@ -26,7 +26,7 @@ html
           alert(result);
         });
     });
-
+   
   body(style="background-color: #BAEFFF; padding-top: 20px; padding-left: 20px;")
     .row(style="padding-left:20px;")
       h2 Welcome 
@@ -37,14 +37,22 @@ html
       h3 #{Entered_Fraction} Students have entered their preferences
       br
       br
+      {% if messages %}
+      <div class="alert alert-error logerrors">
+      {% for message in messages %}
+      <p>{% if message.tags %} {% endif %}{{ message }}</p>
+      {% endfor %}
+      </div>
+      {% endif %} 
       .accordion(id="accordion_2")
         if done_and_sorted.items
           each i in done_and_sorted.items
             .accordion-group
               .accordion-heading
-                |<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#_{{i.0.Class_Name|slugify}}" style="text-decoration: none;">{{i.0.Class_Name}} <div style="padding-left: 20px; display: inline;">{{i.0.Teacher}}</div> <div class="pull-right" style = "display:inline;" >Max Occupancy : {{i.0.Max_Occupancy}}</div></a><div class="pull-right" style = "display:inline;">
-                |<form action='deleted' method="post"/>{% csrf_token %}
-                |<input type="submit" value="Delete class" name="{{i.0.Class_Name}}" class="btn btn-primary btn-mini"/> </form>
+                |<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#_{{i.0.Class_Name|slugify}}" style="text-decoration: none;">{{i.0.Class_Name}} <div style="padding-left: 20px; display: inline;">{{i.0.Teacher}}</div> <div class="pull-right" style = "display:inline;" >Max Occupancy : {{i.0.Max_Occupancy}}</div></a>
+                |<form action='deleted/' method="post" style="display:inline"/>{% csrf_token %}
+                |<input type="submit" id="deleteClass" value="Delete class" name="{{i.0.Class_Name}}" class="btn btn-primary btn-mini" style="display:inline"/> </form>
+                |<div class="pull-right" style = "display:inline;">
                 |</div>
                 |	<div id="_{{i.0.Class_Name|slugify}}" class="accordion-body collapse in">
                 |		<div class="accordion-inner">
@@ -95,5 +103,24 @@ html
           input.pull-right.btn-Gret(type="submit", value = "Add")
     form(action="run_the_sort/", method="post", id="addClass",name = "addClass",enctype="multipart/form-data"){% csrf_token %}
       input.btn-Gret(type="submit", value = "Sort the students (Don't worry you can run this multiple times)", id= "submit", name = "submit", style = "margin-bottom : 50px;")
+
+#editClassModal(class="modal hide fade", tabindex="-1", role = "dialogue", aria-labelledby="myModalLabel",alt="add class")
+      .modal-header
+        btn.pull-right(class='close',data-dismiss="modal",aria-hidden="true") x
+        h1(style="text-align:left") Edit A Class
+      .modal-body(style="text-align: left")
+        form(action="edit_class/", method="post", id="addClass",name = "editClass"){% csrf_token %}
+          input(class="span4",type ="text", required, placeholder="Old Class Name",name="OldName",id="OldName",required="true",maxlength="100")
+          input(class="span4",type ="text", required, placeholder="New Class Name",name="Class_Name",id="Class_Name",required="true",maxlength="100")
+          input(class="span1",type="number", name = "MO",min="1", max="300",required = "true")
+          input(class="span2",type="text", placeholder="Grade",name = "Grade",min="6", max="8",required = "true")
+          br
+          textarea.form-control.span7(placeholder="Class Description", name="ClassDescription",id="ClassDescription",rows="4", required = "true", maxlength=1000)
+            br
+          input.span7(placeholder="Teacher Name", name="Teacher",id="Teacher",required = "true", maxlength=20)
+          br
+
+          .modal-footer
+            input.btn-Gret(type="submit", value = "Edit")
 
 
