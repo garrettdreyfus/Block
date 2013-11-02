@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<link rel="stylesheet" href="../../static/bootstrap/css/index.css">
+		<link rel="stylesheet" href="../../static/bootstrap/css/bootstrap.css">
+		
+
+	</head>
+
+	<body>
+		<h1 id="indextitle"> Block X Block </h1>
+		<div style="display:block; margin:auto;width:50%; padding-top:30px;">			
+			<form action="school_access/" method="post" id="SchoolLogi" name="SchoolLogin" style="display:inline;width:50%">{% csrf_token %}
+				<div style="display:block;"> 
+					<input type="text" required placeholder="School Name" name="SchoolName" id="SchoolName" />
+					<br>
+					<input type="password" required placeholder="Password" name="SchoolPassword" id="SchoolPassword" />
+					<br>
+					<input type="submit" class="button" value="Login"/>
+				</div>
+
+			</form>
+			<form action="user_access/" method="post" id="StudentLogin" name="StudentLogin" style="display:inline; width:50%;">{% csrf_token %}
+				<div style="display:block; text-align-center;">
+					<input type="text" required placeholder="Username" name="Username" id="Username" />
+					<br>
+					<input type="password" required placeholder="Password" name="StudentPassword" id="StudentPassword" />
+					<br>
+					<input type="submit" class="button" value="Login" />
+				</div>
+			</form>		
+		</div>
+	</body>
+</html>
+
