@@ -1,17 +1,12 @@
-body{
-	height:100%;
-	width:100%;
-	text-align:center;
+body {
+  padding-left:5%;
 }
-#indextitle{
-	padding-top:15%;
-	margin-top:0px;
-	font-size:72px;
-}
-form {
-  padding-top:1%;
-	position:relative;
-	float:left;
+.ui-stat-default{
+  font-size:50px;
+  display:block;
+  width:250px;
+  height:50px;
+  line-height:50px;
 }
 .btn{
 	background-color:#fff;
@@ -23,4 +18,8 @@ form {
 	background-image: none;
 	background-repeat: no-repeat;
 	filter: none;
+  
+}
+#success-alert{
+  width:100%;
 }
