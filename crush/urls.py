@@ -23,4 +23,5 @@ urlpatterns = patterns('',
     url(r'^school_profile/Publish$', views.Publish, name='Publish'),
     url(r'^school_profile/edit_class/$', views.edit_class, name='edit_class'),
     url(r'^school_profile/logout_view/$', views.logout_view, name='logout_view'),
+    url(r'^userview/logout_view/$', views.logout_view, name='logout_view'),
 )
