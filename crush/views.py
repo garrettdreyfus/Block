@@ -1,7 +1,8 @@
 from django.http import HttpResponseRedirect, HttpResponse
+from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.urlresolvers import reverse
-from django.contrib.auth import *
+# from django.contrib.auth import *
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.auth.hashers import *
 from System.models import *
@@ -64,13 +65,16 @@ def Publish(request):
               "text":'Your final class assignments are attached'})
     return HttpResponseRedirect(reverse('crush:school_profile'))
 def index(request):
-	return render(request, 'crush/index.jade')
+	return render(request, 'crush/index.html', {})
+def logout_view(request):
+    logout(request)
+    return HttpResponseRedirect(reverse('crush:index'))
 def about(request):
 	return render(request, 'crush/about.jade')
 def registration(request):
 	return render(request, 'crush/registration.jade')
 def school_home(request):
-	return render(request, 'crush/school_home.jade')
+	return render(request, 'crush/school_home.html')
 def register(request):
     SchoolInfo = request.POST
     Username = SchoolInfo["SchoolName_Reg"]
@@ -100,7 +104,7 @@ def edit_class(request):
     ClassInfo = request.POST
     usr = request.user
     oldName = ClassInfo["OldName"]
-    Description = ClassInfo["ClassDescription"]
+    Description = ClassInfo["description"]
     MO = ClassInfo["MO"]
     teacher = ClassInfo["Teacher"]
     grade = ClassInfo["Grade"]
@@ -133,16 +137,13 @@ def edit_class(request):
     return HttpResponseRedirect(reverse('crush:school_profile'))
 def deleted(request):
     print "MADE IT TO DELETED"
-    ident = request.POST
-    for key in request.POST.keys():
-        if request.POST[key] == 'Delete class':
-            ident = key
-    if key != "":
-        c = Classes.objects.get(Class_Name=key)
-	prefs = Preference.objects.filter(Class_id = c.id)
-	for p in prefs:
-		p.delete()
-        c.delete()
+    ClassInfo = request.POST
+    ClassName = ClassInfo["ClassName"]
+    c = Classes.objects.get(Class_Name=ClassName)
+    prefs = Preference.objects.filter(Class_id = c.id)
+    for p in prefs:
+        p.delete()
+    c.delete()
     return HttpResponseRedirect(reverse('crush:school_profile'))
 
 def user_access(request):
@@ -163,7 +164,7 @@ def userview(request):
     Student = User_profile.objects.get(user_profile=usr)
     School = Student.School
     classes = Classes.objects.filter(Grade=Student.Grade) # filter(School=School).filter(Grade=Student.Grade)
-    return render(request, 'crush/userview.jade', {'classes':classes})
+    return render(request, 'crush/userview.html', {'classes':classes})
     
 def school_profile(request):
     usr = request.user
@@ -175,7 +176,7 @@ def school_profile(request):
         if len(Preference.objects.filter(student=i)) == 0:
             not_entered.append(i)
     Entered_Fraction = str(len(Students)-len(not_entered)) + ' / ' + str(len(Students))
-    return render(request, 'crush/school_home.jade', {'School':School,'Students':Students,'Entered_Fraction':Entered_Fraction,'done_and_sorted':done_and_sorted,'Preferences':Preferences})
+    return render(request, 'crush/school_home.html', {'School':School,'Students':Students,'Entered_Fraction':Entered_Fraction,'done_and_sorted':done_and_sorted,'Preferences':Preferences})
     
 def school_access(request):
     SchoolInfo = request.POST

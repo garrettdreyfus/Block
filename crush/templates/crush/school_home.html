@@ -37,7 +37,8 @@
       <h1>{{School.school_profile.username}}</h1>
       <h3>{{Entered_Fraction}} of students have entered their preferences</h3>
       {% if messages %}
-        <div class="alert alert-error logerrors">
+        <div class="alert alert-error">
+	<button type="button" class="close" data-dismiss="alert">&times;</button>
           {% for message in messages %}
           <p> {% if message.tags %} {% endif %} {{message}} </p>
           {% endfor %}
@@ -49,8 +50,7 @@
             <div class="accordion-group">
               <div class="accordion-heading">
                 <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#_{{i.0.Class_Name|slugify}}" style="text-decoration: none;">{{i.0.Class_Name}} <div style="padding-left: 20px; display: inline;">{{i.0.Teacher}}</div>
-                <form action='deleted/' method="post" style="display:inline"/>{% csrf_token %}
-                <input type="submit" id="deleteClass" value="Delete class" name="{{i.0.Class_Name}}" class="btn btn-mini pull-right" style="display:inline"/> </form> <div class="pull-right" style = "display:inline;" >Max Occupancy : {{i.0.Max_Occupancy}}</div> </a>
+                <div class="pull-right" style = "display:inline;" >Max Occupancy : {{i.0.Max_Occupancy}}</div> </a>
                 <div class="pull-right" style = "display:inline;">
                 </div>
                 	<div id="_{{i.0.Class_Name|slugify}}" class="accordion-body collapse in">
@@ -104,6 +104,7 @@
           </form>
         </div>
       </div>
+      
       <div id="editClassModal" class="modal hide fade" tabindex="-1" role="dialogue" alt="add class">
         <div class="modal-header">
           <div class="pull-right close" data-dismiss="modal" aria-hidden="true">x</div>
@@ -115,7 +116,7 @@
             <input class="span4" type="text" required="true" placeholder="New Class Name" name="Class_Name" id="Class_Name" maxlength="100" />
             <input class="span1" type="number" name="MO" min="1" max="300" required="true" />
             <input class="span2" type="text" placeholder="Grade" name="Grade" min="6" max="8" required="true" />
-            <textarea class="form-control span7" placeholder="Class Description" name="Class Description" id="ClassDescription" rows="4" required = "true" maxlength=100 ></textarea>
+            <textarea class="form-control span7" placeholder="Class Description" name="description" id="description" rows="4" required = "true"></textarea>
             <input class="span4" type="text" placeholder="Teacher Name" name="Teacher" id="Teacher" required="true" maxlength=20 />
             <div class="modal-footer">
               <input class="btn" type="submit" value="Edit">
@@ -124,15 +125,48 @@
         </div>
       </div>
     </div>
-      <form action="run_the_sort/" method="post" id="addClass" name="addClass" enctype="multipart/form-data">{% csrf_token %}
-        <input class="btn span6" type="submit" value="Sort the students (don't worry you can run this multiple times)" id="submit" name="submit" />
-      </form>
+    
+    <form action="run_the_sort/" method="post" id="addClass" name="addClass" enctype="multipart/form-data">{% csrf_token %}
+    <input class="btn span6" type="submit" value="Sort the students (don't worry you can run this multiple times)" id="submit" name="submit" />
+    </form>
 
-      <div class="btn btn-lg span2 c" data-toggle="modal" data-target="#addClassModal"> Add a Class </div>
-      <div class="btn btn-lg span2 c" data-toggle="modal" data-target="#addStudentsModal"> Add students </div>
-      <div class="btn btn-lg span2 c" data-toggle="modal" data-target="#editClassModal"> Edit a Class </div>
-      <form action='Publish' method='post' id='Publish' name='Publish' enctype='multipart/form-data'>{% csrf_token %}
-        <input class="btn" type="submit" id="submit" value="Publish assignments" id="submit" name="submit" />
-      </form>
+    <form action="Publish/" method="post" id="Publish" name="Publish" enctype="multipart/form-data">{% csrf_token %}
+        <input class="btn" type="submit" id="submit" value="Publish assignments" id="submit" name="submit"/>
+    </form>
+    
+    <div id="deleteClassModal" class="modal hide fade" tabindex="-1" role="dialogue" aria-labelledby="myModalLabel" alt="add class">
+        <div class="modal-header">
+          <div class="pull-right close" data-dismiss="modal" aria-hidden="true" >x</div>
+          <h1>Which class would you like to delete?</h1>
+        </div>
+        <div class="modal-body">
+          <form action="deleted/" method="post" id="addStudents" name="addStudents" enctype="multipart/form-data"> {% csrf_token %}
+	  <input type="text" required="true" placeholder="Class Name" name="ClassName" id="ClassName" maxlength="100"/>
+	  <input class="btn" type="submit" value="Delete"/>
+	  </form>
+        </div>
+    </div>
+      
+
+<div class="navbar navbar-fixed-bottom">
+  <div class="navbar-inner">
+  <ul class="nav">
+   <li><a href="#addClassModal" role="button" data-toggle="modal"">Add
+              a class</a></li>
+   <li class="divider-vertical"></li>
+    <li><a href="#addStudentsModal" role="button" data-toggle="modal"">Add students</a></li>
+  <li class="divider-vertical"></li>
+  <li><a href="#deleteClassModal" role="button"
+              data-toggle="modal"">Delete a class</a></li>
+    <li class="divider-vertical"></li>
+  <li><a href="#editClassModal" role="button" data-toggle="modal"">Edit a Class</a></li>
+ <li class="divider-vertical"></li>
+ <li><a href="Publish/" role="button">Publish Assignments</a></li>
+  <li class="divider-vertical"></li>
+ <li><a href="logout_view/" role="button">Logout</a></li>
+  </ul>
+  </div>
+</div>
   </body>
+
 </html>
