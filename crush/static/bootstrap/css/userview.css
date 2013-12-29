@@ -2,8 +2,7 @@ body {
   padding-left:5%;
 }
 .ui-stat-default{
-  font-size:50px;
-  display:block;
+    display:block;
   width:250px;
   height:50px;
   line-height:50px;

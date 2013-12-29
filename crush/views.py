@@ -178,22 +178,23 @@ def school_profile(request):
     Entered_Fraction = str(len(Students)-len(not_entered)) + ' / ' + str(len(Students))
     return render(request, 'crush/school_home.html', {'School':School,'Students':Students,'Entered_Fraction':Entered_Fraction,'done_and_sorted':done_and_sorted,'Preferences':Preferences})
     
-def school_access(request):
-    SchoolInfo = request.POST
-    Username = SchoolInfo["SchoolName"]
-    Password = SchoolInfo["SchoolPassword"]
-    username_check = Username
-    password_check = Password
-    usr = authenticate(username=username_check, password=password_check)
-    if usr is not None:
-        if usr.is_active:
-            login(request, usr)
-
-            return HttpResponseRedirect(reverse('crush:school_profile'))
-
+def log_in(request):
+    username = request.POST['SchoolName']
+    password = request.POST['SchoolPassword']
+    user = authenticate(username=username, password=password)
+    if user is not None:
+        if user.is_active:
+            login(request, user)
+            u = User.objects.get(username__exact=username)
+            if u.is_staff:
+                return HttpResponseRedirect(reverse('crush:school_home'))
+            else:
+                return HttpResponseRedirect(reverse('crush:userview'))
+        else:
+            return HttpResponseRedirect(reverse('crush:index'))
     else:
-       messages.add_message(request, messages.ERROR, 'Your username or password is invalid')
-       return HttpResponseRedirect(reverse('crush:index'))
+        messages.add_message(request, messages.ERROR, 'Your username or password is invalid')
+        return HttpResponseRedirect(reverse('crush:index'))
 
 def addClass(request):
     ClassInfo = request.POST
@@ -218,7 +219,7 @@ def addStudents(request):
     csvfile = request.FILES['spreadsheet']
     csvfile = csvfile.read()
     usr = request.user
-    school = SchoolProfile.objects.get(school_profile=usr)
+    #school = SchoolProfile.objects.get(school_profile=usr)
     rowsp= csvfile.split('\r')
     # rowsp = rowsp[0].split('\n')
     rows=[]
@@ -232,16 +233,22 @@ def addStudents(request):
 	username = re.sub(r'\s', '', username)
         if len(User.objects.filter(username= username))==0:
             user = User.objects.create_user(username)
+            admin_bol = row[4].lower()
+            if admin_bol == 'admin':
+                user.is_staff = True
+            else:
+                user.is_staff = False
             user.set_password(row[2])
             user.first_name = row[0]
             user.last_name = row[1] 
             user.save()
             student = User_profile(
                 user_profile=user,
-                School = school,
+                #School = school,
                 Grade = row[3]
             )
             student.save()
+    messages.add_message(request, messages.SUCCESS, 'Students have successfuly been added')
     return HttpResponseRedirect(reverse('crush:school_profile'))
         
     return HttpResponseRedirect(reverse('crush:school_profile'))

@@ -7,6 +7,7 @@ app_label = 'crush'
 class SchoolProfile(models.Model):
     school_profile = models.OneToOneField(User,related_name='school_profile')
     Zip_code = models.CharField(max_length=9,null=True)
+    #    deadline = models.DateField()
     def _unicode_(self):
 		return (self.profile.username)
 class Classes(models.Model):
@@ -18,6 +19,7 @@ class Classes(models.Model):
     Teacher = models.CharField(max_length=20)
     def _unicode_(self):
         return (self.Class_Name)
+    
 class User_profile(models.Model):
     user_profile = models.OneToOneField(User,related_name='user_profile')
     School = models.ForeignKey(SchoolProfile, related_name="School", null=True)
