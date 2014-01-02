@@ -5,11 +5,11 @@ from django.contrib.auth.models import User, Group, Permission
 app_label = 'crush'
 
 class SchoolProfile(models.Model):
-    school_profile = models.OneToOneField(User,related_name='school_profile')
+    name = models.CharField(max_length=100, null=False)
     Zip_code = models.CharField(max_length=9,null=True)
-    #    deadline = models.DateField()
+    deadline = models.DateTimeField(null=True)
     def _unicode_(self):
-		return (self.profile.username)
+		return (self.profile.name)
 class Classes(models.Model):
     School = models.ForeignKey(SchoolProfile, related_name="school", null=True)
     Class_Name= models.CharField(max_length=100, null=False)
@@ -23,9 +23,10 @@ class Classes(models.Model):
 class User_profile(models.Model):
     user_profile = models.OneToOneField(User,related_name='user_profile')
     School = models.ForeignKey(SchoolProfile, related_name="School", null=True)
+    status = models.CharField(max_length=100, null=False)
     Class_chosen = models.OneToOneField('Preference', related_name="class_chosen", null=True, on_delete=models.SET_NULL)
-    Grade = models.IntegerField(max_length=1000)
-    Locked = models.BooleanField( default=False)
+    Grade = models.IntegerField(max_length=1000, null=True)
+    Locked = models.BooleanField(default=False)
     def _unicode_(self):
         return (self.profile.username)
         

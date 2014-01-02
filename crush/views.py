@@ -12,16 +12,32 @@ from django.core.mail import send_mail
 from django.contrib import messages
 import csv, re, requests
 from operator import *
+import datetime
+import time
+from django.utils.timezone import utc
 # from paste.util import multidict
 
-def sorting(usr, School, Students):
+def deadline(request):
+    usr = request.user
+    user = User_profile.objects.get(user_profile=usr)
+    school = user.School
+    deadline = request.POST
+    month = int(deadline["month"])
+    day = int(deadline["day"])
+    year = int(deadline["year"])
+    deadline = datetime.datetime(year, month, day, 23, 59)
+    school.deadline = deadline
+    school.save()
+    return HttpResponseRedirect(reverse('crush:school_home'))
+
+def sorting(usr, Students):
     done_and_sorted = {}
     Preferences={}
     for student in Students:
         Preferences[student.id] = [] 
         for i in Preference.objects.filter(student = student):
             Preferences[student.id].append((i.Class.Class_Name))
-    for i in Classes.objects.filter(School=School):
+    for i in Classes.objects.all():
 	    done_and_sorted[i]=[]
     for i in Students: 
         if i.Class_chosen!=None:
@@ -30,10 +46,10 @@ def sorting(usr, School, Students):
 
 def Publish(request):
     usr = request.user
-    School = SchoolProfile.objects.get(school_profile=usr)
-    Students = User_profile.objects.filter(School=School)
+    ## School = SchoolProfile.objects.get(school_profile=usr)
+    Students = User_profile.objects.filter(status='student')
     assignments = Preference.objects.all()
-    (done_and_sorted, Preferences) = sorting(usr, School, Students)
+    (done_and_sorted, Preferences) = sorting(usr, Students)
     what_class = {}
     gone_through = []
     for c in done_and_sorted.keys():
@@ -63,7 +79,7 @@ def Publish(request):
               "to": ["justin.kaashoek@gmail.com"],
               "subject": 'Final class assignments',
               "text":'Your final class assignments are attached'})
-    return HttpResponseRedirect(reverse('crush:school_profile'))
+    return HttpResponseRedirect(reverse('crush:school_home'))
 def index(request):
 	return render(request, 'crush/index.html', {})
 def logout_view(request):
@@ -77,27 +93,38 @@ def school_home(request):
 	return render(request, 'crush/school_home.html')
 def register(request):
     SchoolInfo = request.POST
-    Username = SchoolInfo["SchoolName_Reg"]
+    Schoolname = SchoolInfo["SchoolName"]
+    Admin_name = SchoolInfo["username"]
     Password = SchoolInfo["SchoolPassword_Reg"]
+    Check_password = SchoolInfo["SchoolPassword2_Reg"]
     Zip_code = SchoolInfo["Zip_Reg"]
     Email = SchoolInfo["Email"]
-    if User.objects.filter(username = Username).count()>0:
-        return HttpResponse("Your username is not unique! Try another one")
-
-    Usr = User.objects.create_user(Username, Email, Password)
+    if Password != Check_password:
+        messages.add_message(request, messages.ERROR, 'Passwords did not match')
+        return HttpResponseRedirect(reverse('index'))
+    if SchoolProfile.objects.filter(name = Schoolname).count()>0:
+        return HttpResponse("School already exists")
+    Usr = User.objects.create_user(Admin_name, Email, Password)
     Usr.save()
     School = SchoolProfile(
-        school_profile=Usr,
+        name=Schoolname,
         Zip_code = Zip_code,
     )
     School.save()
-    username_check = Username
+    s = SchoolProfile.objects.get(name=Schoolname)
+    userprofile = User_profile(
+        status = 'admin',
+        user_profile = Usr,
+        School = School,
+        )
+    userprofile.save()
+    username_check = Admin_name
     password_check = Password
     usr = authenticate(username=username_check, password=password_check)
     if usr is not None:
         if usr.is_active:
             login(request, usr)
-            return HttpResponseRedirect(reverse('school_profile'))
+            return HttpResponseRedirect(reverse('crush:school_home'))
     return HttpResponseRedirect(reverse('index'))
 
 def edit_class(request):
@@ -115,26 +142,16 @@ def edit_class(request):
     print classes
     if oldName not in classes:
 	    messages.add_message(request, messages.ERROR, 'The class in the old name field is incorrect')
-	    return HttpResponseRedirect(reverse('crush:school_profile'))
-    School = SchoolProfile.objects.get(school_profile=usr)
+	    return HttpResponseRedirect(reverse('crush:school_home'))
+    #School = SchoolProfile.objects.get(school_profile=usr)
     course = Classes.objects.get(Class_Name=oldName)
-    course.School=School
     course.Class_Name = Name
     course.Class_Description=Description
     course.Max_Occupancy=MO
     course.Teacher=teacher
     course.Grade=grade
     course.save()
-    ## Class = Classes(
-    ##     School=School,
-    ##     Class_Name=Name,
-    ##     Class_Description=Description,
-    ##     Max_Occupancy=MO,
-    ##     Teacher=teacher,
-    ##     Grade=grade,
-    ## )
-    ## Class.save()
-    return HttpResponseRedirect(reverse('crush:school_profile'))
+    return HttpResponseRedirect(reverse('crush:school_home'))
 def deleted(request):
     print "MADE IT TO DELETED"
     ClassInfo = request.POST
@@ -144,7 +161,7 @@ def deleted(request):
     for p in prefs:
         p.delete()
     c.delete()
-    return HttpResponseRedirect(reverse('crush:school_profile'))
+    return HttpResponseRedirect(reverse('crush:school_home'))
 
 def user_access(request):
     StudentInfo = request.POST
@@ -169,14 +186,17 @@ def userview(request):
 def school_profile(request):
     usr = request.user
     not_entered = []
-    School = SchoolProfile.objects.get(school_profile=usr)
-    Students = User_profile.objects.filter(School=School)
-    (done_and_sorted, Preferences) = sorting(usr, School, Students)
+#    School = SchoolProfile.objects.get(school_profile=usr)
+    Students = User_profile.objects.filter(status='student')
+    (done_and_sorted, Preferences) = sorting(usr, Students)
     for i in Students:
         if len(Preference.objects.filter(student=i)) == 0:
             not_entered.append(i)
+    if len(Students) == len(not_entered):
+        Entered_Fraction = "0/" + str(len(Students))
+    print "FRACTION", Entered_Fraction
     Entered_Fraction = str(len(Students)-len(not_entered)) + ' / ' + str(len(Students))
-    return render(request, 'crush/school_home.html', {'School':School,'Students':Students,'Entered_Fraction':Entered_Fraction,'done_and_sorted':done_and_sorted,'Preferences':Preferences})
+    return render(request, 'crush/school_home.html', {'Students':Students,'Entered_Fraction':Entered_Fraction,'done_and_sorted':done_and_sorted,'Preferences':Preferences})
     
 def log_in(request):
     username = request.POST['SchoolName']
@@ -185,10 +205,15 @@ def log_in(request):
     if user is not None:
         if user.is_active:
             login(request, user)
-            u = User.objects.get(username__exact=username)
-            if u.is_staff:
+            u = User.objects.get(username=username)
+            u = User_profile.objects.get(user_profile=u)
+            school = u.School
+            if u.status == 'admin':
                 return HttpResponseRedirect(reverse('crush:school_home'))
             else:
+                if school.deadline != None and datetime.datetime.utcnow().replace(tzinfo=utc) > school.deadline:
+                    messages.add_message(request, messages.ERROR, 'Deadline to submit preferences has passed')
+                    return HttpResponseRedirect(reverse('crush:index'))
                 return HttpResponseRedirect(reverse('crush:userview'))
         else:
             return HttpResponseRedirect(reverse('crush:index'))
@@ -199,7 +224,7 @@ def log_in(request):
 def addClass(request):
     ClassInfo = request.POST
     usr = request.user
-    School = SchoolProfile.objects.get(school_profile=usr)
+    # School = SchoolProfile.objects.get(School=usr)
     Description = ClassInfo["ClassDescription"]
     Name = ClassInfo["ClassName"]
     MO = ClassInfo["MO"]
@@ -214,12 +239,13 @@ def addClass(request):
         Grade=grade,    
     )
     Class.save()
-    return HttpResponseRedirect(reverse('crush:school_profile'))
+    return HttpResponseRedirect(reverse('crush:school_home'))
 def addStudents(request):
     csvfile = request.FILES['spreadsheet']
     csvfile = csvfile.read()
     usr = request.user
-    #school = SchoolProfile.objects.get(school_profile=usr)
+    user = User_profile.objects.get(user_profile=usr)
+    school = user.School
     rowsp= csvfile.split('\r')
     # rowsp = rowsp[0].split('\n')
     rows=[]
@@ -228,30 +254,28 @@ def addStudents(request):
     for row in rowsp:
         row = row.split(',')
         if len(row)==0:
-             return HttpResponseRedirect(reverse('crush:school_profile'))
+             return HttpResponseRedirect(reverse('crush:school_home'))
         username = row[1].lower() + row[0].lower()
 	username = re.sub(r'\s', '', username)
         if len(User.objects.filter(username= username))==0:
+            print "Add", username
             user = User.objects.create_user(username)
             admin_bol = row[4].lower()
-            if admin_bol == 'admin':
-                user.is_staff = True
-            else:
-                user.is_staff = False
             user.set_password(row[2])
             user.first_name = row[0]
             user.last_name = row[1] 
             user.save()
             student = User_profile(
                 user_profile=user,
-                #School = school,
-                Grade = row[3]
+                School = school,
+                Grade = row[3],
+                status = admin_bol
             )
             student.save()
     messages.add_message(request, messages.SUCCESS, 'Students have successfuly been added')
-    return HttpResponseRedirect(reverse('crush:school_profile'))
+    return HttpResponseRedirect(reverse('crush:school_home'))
         
-    return HttpResponseRedirect(reverse('crush:school_profile'))
+   
 def pref_reg(request):
     dataString = request.POST["data"]
     dataString = dataString.split(',')
@@ -274,8 +298,8 @@ def sort( preferenceDict,request):
     #preferenceDict is a dict with student objects as keys and 
     # preference objects as values
     #classDict is a Dictionary with Classes as keys and student objects as dicts.
-    school = SchoolProfile.objects.get(school_profile=request.user)
-    classes = Classes.objects.filter(School=school)
+#    school = SchoolProfile.objects.get(school_profile=request.user)
+    classes = Classes.objects.all()
     classDict = {}
     for i in classes: classDict[i] = []
     #go through preferenceDict and start dumb sort.
@@ -320,8 +344,8 @@ def switch(sort, preferenceDict, request):
     return sort
 def run_the_sort (request):
     
-    school = SchoolProfile.objects.get(school_profile = request.user)
-    allStudents = User_profile.objects.filter(School=school)
+    #school = SchoolProfile.objects.get(school_profile = request.user)
+    allStudents = User_profile.objects.filter(status='student')
     studentandprefs = {}
     for student in allStudents: studentandprefs[student]= Preference.objects.filter(student=student)
     # gotta sort studentandprefs
@@ -335,7 +359,7 @@ def run_the_sort (request):
             pref = Preference.objects.get(student=student,Class=Cl)
             student.Class_chosen = pref
             student.save()
-    return HttpResponseRedirect(reverse('crush:school_profile'))
+    return HttpResponseRedirect(reverse('crush:school_home'))
     
     
 def usernameVal(request):

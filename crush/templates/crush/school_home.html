@@ -37,8 +37,7 @@
       <h1>{{School.school_profile.username}}</h1>
       <h3>{{Entered_Fraction}} of students have entered their preferences</h3>
       {% if messages %}
-        <div class="alert alert-error">
-	<button type="button" class="close" data-dismiss="alert">&times;</button>
+        <div class="alert alert-error span10">
           {% for message in messages %}
           <p> {% if message.tags %} {% endif %} {{message}} </p>
           {% endfor %}
@@ -146,12 +145,31 @@
 	  </form>
         </div>
     </div>
+    
+    <div id="deadlineModal" class="modal hide fade" tabindex="-1" role="dialogue" aria-labelledby="myModalLabel" alt="add class">
+        <div class="modal-header">
+          <div class="pull-right close" data-dismiss="modal" aria-hidden="true" >x</div>
+          <h2>Please set deadline date below</h2>
+        </div>
+        <div class="modal-body">
+	  <form action="deadline/" method="post" id="deadline" name="deadline" enctype="multipart/form-data"> {% csrf_token %}
+	  <input type="text" required="true" class="span2"
+        placeholder="Month (01 or 1 work)" name="month" id="month"/> 
+	  <input type="text" class="span2" required="true"
+        placeholder="Day (ex. 01 or 1 work)" name="day" id="day"/>
+	  <input type="text" class="span2" required="true"
+        placeholder="Year (ex. 2014)" name="year" id="year" maxlength="100"/><br>
+	  <input type="submit" class="btn" value="Set deadline"/>
+	  </form>
+	  Deadline will be set for 11:59 P.M. on this date
+        </div>
+    </div>
       
 <div class="navbar navbar-fixed-bottom teachnav">
   <div class="navbar-inner">
   <ul class="nav">
    <li><a href="#addClassModal" role="button" data-toggle="modal"">Add
-              a class</a></li>
+  a class</a></li>
    <li class="divider-vertical"></li>
     <li><a href="#addStudentsModal" role="button" data-toggle="modal"">Add students</a></li>
   <li class="divider-vertical"></li>
@@ -162,8 +180,7 @@
  <li class="divider-vertical"></li>
  <li><a href="Publish/" role="button">Publish Assignments</a></li>
   <li class="divider-vertical"></li>
- 
- <li><a href="#deadlineModal" role="button">Set Deadline</a></li>
+ <li><a href="#deadlineModal" role="button" data-toggle="modal">Set Deadline</a></li>
   <li class="divider-vertical"></li>
  <li><a href="logout_view/" role="button">Logout</a></li>
  

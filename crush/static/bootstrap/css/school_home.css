@@ -45,4 +45,11 @@ button {
   margin-right:5px;
   margin-left:0px;
 }
+#deadlineModal input {
+    height: 30px;
+}
+.alert{
+    text-align: center;
+    
+}
 

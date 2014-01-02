@@ -8,14 +8,20 @@
 	</head>
 
 	<body>
-
+{% if messages %}
+        <div class="alert alert-error">
+          {% for message in messages %}
+          <p> {% if message.tags %} {% endif %} {{message}} </p>
+          {% endfor %}
+        </div>
+      {% endif %}
 
 <br><br><br><br><br>
 <div id="content">
     <div class="jumbotron">
         <h1 id="indextitle"> Block X Block </h1>
         <p class="lead">Get started today!</p>
-        <a class="btn btn-large register" href="index/">Register</a>
+        <a class="btn btn-large register" href="#registerModal" data-toggle="modal">Register</a>
       <a class="btn btn-large login" href="#loginModal" data-toggle="modal">Log in</a> <br>
     </div>
 </div>
@@ -38,6 +44,25 @@
 					<input type="submit" class="btn" value="Login" />
 				</div>
 				</form>	
+  </div>
+</div>
+
+<div id="registerModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Please register below</h3>
+  </div>
+  <div class="modal-body">
+    <form action="register/" method="post" id ="SchoolRegistration" name = "SchoolRegistration">{% csrf_token %}
+				<input type="text" required
+  placeholder="School Name" name ="SchoolName" id = "SchoolName"/>
+    <input type="text" required placeholder="Admin username" name ="username" id = "SchoolName"/>
+				<input type="password" required placeholder="Administrator Password" name ="SchoolPassword_Reg" id = "SchoolPassword_Reg"/>
+				<input type="password" required placeholder="Re-Enter Password" name ="SchoolPassword2_Reg" id = "SchoolPassword2_Reg"/>
+				<input type="text" required placeholder="Zip Code" name ="Zip_Reg" id = "Zip_Reg"/>
+				<input type="text" required placeholder="Administrator Email" name ="Email" id = "Email"/>
+				<input type="submit" value="Register">
+    </form
   </div>
 </div>
 </body>
