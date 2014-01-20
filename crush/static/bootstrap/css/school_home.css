@@ -37,6 +37,9 @@ button {
   height:30px;
 
 }
+#editClassModal input{
+    height:30px;
+}
 #deleteClass{
  margin-left:10px;
  margin-right:0px;

@@ -79,8 +79,8 @@
           <form action="addClass/" method="post" id="addClass" name="addClass">{% csrf_token %}
             <input class="span3" type="text" required placeholder="Class Name" name="ClassName" id="ClassName" required maxlength="100" />
             <input class="span2" type="number" placeholder="Max Occupancy" name="MO" min="1" max="360" required />
-            <input class="span2" type="text" placeholder ="Grade" name="Grade" min="6" max="8" required />
-            <input class="span7" type="text" placeholder ="Teacher" name="Teacher" min="6" max="8" required />
+            <input class="span3" type="text" placeholder ="Teacher" name="Teacher" required /><input class="span2" type="text" placeholder ="Grade (ex. 6, 6-7, 6-8)" name="Grade" min="6" max="8" required />
+            
             <textarea class="form-control span7" placeholder = "Class Description" name="ClassDescription" id="ClassDescription" rows="4" required="true" maxlength=1000 ></textarea>
             <div class="modal-footer">
               <input class="btn" type="submit" value="Add"/>
@@ -164,7 +164,10 @@
 	  Deadline will be set for 11:59 P.M. on this date
         </div>
     </div>
-      
+       <div class="alert">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      <strong>Note:</strong> Students have until <strong>{{deadline}}</strong> to submit your preferences.
+    </div>
 <div class="navbar navbar-fixed-bottom teachnav">
   <div class="navbar-inner">
   <ul class="nav">

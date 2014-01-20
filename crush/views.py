@@ -28,7 +28,7 @@ def deadline(request):
     deadline = datetime.datetime(year, month, day, 23, 59)
     school.deadline = deadline
     school.save()
-    return HttpResponseRedirect(reverse('crush:school_home'))
+    return HttpResponseRedirect(reverse('crush:school_profile'))
 
 def sorting(usr, Students):
     done_and_sorted = {}
@@ -79,7 +79,7 @@ def Publish(request):
               "to": ["justin.kaashoek@gmail.com"],
               "subject": 'Final class assignments',
               "text":'Your final class assignments are attached'})
-    return HttpResponseRedirect(reverse('crush:school_home'))
+    return HttpResponseRedirect(reverse('crush:school_profile'))
 def index(request):
 	return render(request, 'crush/index.html', {})
 def logout_view(request):
@@ -124,7 +124,7 @@ def register(request):
     if usr is not None:
         if usr.is_active:
             login(request, usr)
-            return HttpResponseRedirect(reverse('crush:school_home'))
+            return HttpResponseRedirect(reverse('crush:school_profile'))
     return HttpResponseRedirect(reverse('index'))
 
 def edit_class(request):
@@ -142,7 +142,7 @@ def edit_class(request):
     print classes
     if oldName not in classes:
 	    messages.add_message(request, messages.ERROR, 'The class in the old name field is incorrect')
-	    return HttpResponseRedirect(reverse('crush:school_home'))
+	    return HttpResponseRedirect(reverse('crush:school_profile'))
     #School = SchoolProfile.objects.get(school_profile=usr)
     course = Classes.objects.get(Class_Name=oldName)
     course.Class_Name = Name
@@ -151,7 +151,7 @@ def edit_class(request):
     course.Teacher=teacher
     course.Grade=grade
     course.save()
-    return HttpResponseRedirect(reverse('crush:school_home'))
+    return HttpResponseRedirect(reverse('crush:school_profile'))
 def deleted(request):
     print "MADE IT TO DELETED"
     ClassInfo = request.POST
@@ -161,7 +161,7 @@ def deleted(request):
     for p in prefs:
         p.delete()
     c.delete()
-    return HttpResponseRedirect(reverse('crush:school_home'))
+    return HttpResponseRedirect(reverse('crush:school_profile'))
 
 def user_access(request):
     StudentInfo = request.POST
@@ -180,13 +180,19 @@ def userview(request):
     usr = request.user
     Student = User_profile.objects.get(user_profile=usr)
     School = Student.School
-    classes = Classes.objects.filter(Grade=Student.Grade) # filter(School=School).filter(Grade=Student.Grade)
-    return render(request, 'crush/userview.html', {'classes':classes})
+    classes = Classes.objects.all()
+    all_classes = []
+    for i in classes:
+        if str(Student.Grade) in i.Grade:
+            all_classes.append(i)
+            # filter(School=School).filter(Grade=Student.Grade)
+    return render(request, 'crush/userview.html', {'classes':all_classes, 'deadline':School.deadline})
     
 def school_profile(request):
     usr = request.user
     not_entered = []
-#    School = SchoolProfile.objects.get(school_profile=usr)
+    Admin = User_profile.objects.get(user_profile=usr)
+    School = Admin.School
     Students = User_profile.objects.filter(status='student')
     (done_and_sorted, Preferences) = sorting(usr, Students)
     for i in Students:
@@ -194,9 +200,8 @@ def school_profile(request):
             not_entered.append(i)
     if len(Students) == len(not_entered):
         Entered_Fraction = "0/" + str(len(Students))
-    print "FRACTION", Entered_Fraction
     Entered_Fraction = str(len(Students)-len(not_entered)) + ' / ' + str(len(Students))
-    return render(request, 'crush/school_home.html', {'Students':Students,'Entered_Fraction':Entered_Fraction,'done_and_sorted':done_and_sorted,'Preferences':Preferences})
+    return render(request, 'crush/school_home.html', {'Students':Students,'Entered_Fraction':Entered_Fraction,'done_and_sorted':done_and_sorted,'Preferences':Preferences, 'deadline':School.deadline})
     
 def log_in(request):
     username = request.POST['SchoolName']
@@ -209,7 +214,7 @@ def log_in(request):
             u = User_profile.objects.get(user_profile=u)
             school = u.School
             if u.status == 'admin':
-                return HttpResponseRedirect(reverse('crush:school_home'))
+                return HttpResponseRedirect(reverse('crush:school_profile'))
             else:
                 if school.deadline != None and datetime.datetime.utcnow().replace(tzinfo=utc) > school.deadline:
                     messages.add_message(request, messages.ERROR, 'Deadline to submit preferences has passed')
@@ -224,22 +229,33 @@ def log_in(request):
 def addClass(request):
     ClassInfo = request.POST
     usr = request.user
-    # School = SchoolProfile.objects.get(School=usr)
+    Admin = User_profile.objects.get(user_profile=usr)
+    School = Admin.School
     Description = ClassInfo["ClassDescription"]
     Name = ClassInfo["ClassName"]
     MO = ClassInfo["MO"]
     teacher = ClassInfo["Teacher"]
     grade = ClassInfo["Grade"]
+    ngrade = []
+    start = grade[0]
+    end = grade[-1]
+    print start, end, type(start)
+    if len(grade) == 1:
+        ngrade.append(int(grade))
+    else:
+        for i in range(int(start), int(end)+1):
+            ngrade.append(i)
+    print ngrade
     Class = Classes(
         School=School,
         Class_Name=Name,
         Class_Description=Description,
         Max_Occupancy=MO,
         Teacher=teacher,
-        Grade=grade,    
+        Grade=ngrade,    
     )
     Class.save()
-    return HttpResponseRedirect(reverse('crush:school_home'))
+    return HttpResponseRedirect(reverse('crush:school_profile'))
 def addStudents(request):
     csvfile = request.FILES['spreadsheet']
     csvfile = csvfile.read()
@@ -254,7 +270,7 @@ def addStudents(request):
     for row in rowsp:
         row = row.split(',')
         if len(row)==0:
-             return HttpResponseRedirect(reverse('crush:school_home'))
+             return HttpResponseRedirect(reverse('crush:school_profile'))
         username = row[1].lower() + row[0].lower()
 	username = re.sub(r'\s', '', username)
         if len(User.objects.filter(username= username))==0:
@@ -273,7 +289,7 @@ def addStudents(request):
             )
             student.save()
     messages.add_message(request, messages.SUCCESS, 'Students have successfuly been added')
-    return HttpResponseRedirect(reverse('crush:school_home'))
+    return HttpResponseRedirect(reverse('crush:school_profile'))
         
    
 def pref_reg(request):
@@ -359,7 +375,7 @@ def run_the_sort (request):
             pref = Preference.objects.get(student=student,Class=Cl)
             student.Class_chosen = pref
             student.save()
-    return HttpResponseRedirect(reverse('crush:school_home'))
+    return HttpResponseRedirect(reverse('crush:school_profile'))
     
     
 def usernameVal(request):

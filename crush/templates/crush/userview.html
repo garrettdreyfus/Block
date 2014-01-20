@@ -47,6 +47,11 @@
     </script>
   </head>
   <body>
+<br><br>
+ <div class="alert" align="center">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      You have until <strong>{{deadline}}</strong> to submit your preferences.
+    </div>
     <div id="success-alert" class="alert alert-block alert-success fade in">
       <button type="button" class="close" id="close-button">x</button>
       <h4 class="alert-heading">Success!</h4>
@@ -63,7 +68,10 @@
         {% endfor %}
       {% endif %}
     </ul>
-    <input class="btn" type="submit" value="Submit" id="submit" name="submit" />
+    <input class="btn" type="submit" value="Submit" id="submit"
+        name="submit" />
+    <br><br><br><br><br><br>
+   
 
     <div class="navbar navbar-fixed-bottom">
       <div class="navbar-inner">
