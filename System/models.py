@@ -26,6 +26,7 @@ class User_profile(models.Model):
     status = models.CharField(max_length=100, null=False)
     Class_chosen = models.OneToOneField('Preference', related_name="class_chosen", null=True, on_delete=models.SET_NULL)
     Grade = models.CharField(max_length=1000, null=True)
+    Homeroom = models.CharField(max_length=1000, null=True)
     Locked = models.BooleanField(default=False)
     def _unicode_(self):
         return (self.profile.username)

@@ -68,7 +68,7 @@ def Publish(request):
 				better = Preferences[i.student_id]
 				rank = better.index(what_class[user.id])
 				better = "; ".join(better)
-				spamwriter.writerow([user.user_profile, what_class[user.id], "", better, rank+1])
+				spamwriter.writerow([user.user_profile, what_class[user.id], user.Homeroom, better, rank+1])
 		else:
 			continue
     x = requests.post(
@@ -76,7 +76,7 @@ def Publish(request):
         auth=("api", "key-99jb9qto5o4cgelo4zg90l9ki1my7d76"),
         files={"attachment": open("publish.csv")},
         data={"from": "Iceblock admin <justin.kaashoek@gmail.com>",
-              "to": ["justin.kaashoek@gmail.com"],
+              "to": [usr.email],
               "subject": 'Final class assignments',
               "text":'Your final class assignments are attached'})
     return HttpResponseRedirect(reverse('crush:school_profile'))
@@ -152,8 +152,8 @@ def edit_class(request):
     course.Grade=grade
     course.save()
     return HttpResponseRedirect(reverse('crush:school_profile'))
+
 def deleted(request):
-    print "MADE IT TO DELETED"
     ClassInfo = request.POST
     ClassName = ClassInfo["ClassName"]
     c = Classes.objects.get(Class_Name=ClassName)
@@ -256,6 +256,7 @@ def addClass(request):
     )
     Class.save()
     return HttpResponseRedirect(reverse('crush:school_profile'))
+
 def addStudents(request):
     csvfile = request.FILES['spreadsheet']
     csvfile = csvfile.read()
@@ -270,21 +271,25 @@ def addStudents(request):
     for row in rowsp:
         row = row.split(',')
         if len(row)==0:
-             return HttpResponseRedirect(reverse('crush:school_profile'))
+            return HttpResponseRedirect(reverse('crush:school_profile'))
+        if len(row) < 7:
+            messages.add_message(request, messages.ERROR, "Row %s doesn't have enough fields" % row)
+            return HttpResponseRedirect(reverse('crush:school_profile'))
         username = row[1].lower() + row[0].lower()
 	username = re.sub(r'\s', '', username)
         if len(User.objects.filter(username= username))==0:
-            print "Add", username
             user = User.objects.create_user(username)
             admin_bol = row[4].lower()
             user.set_password(row[2])
             user.first_name = row[0]
-            user.last_name = row[1] 
+            user.last_name = row[1]
+            user.email = row[6]
             user.save()
             student = User_profile(
                 user_profile=user,
                 School = school,
                 Grade = row[3],
+                Homeroom = row[5],
                 status = admin_bol
             )
             student.save()
