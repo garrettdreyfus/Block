@@ -11,12 +11,14 @@ from crush.models import *
 from django.core.mail import send_mail
 from django.contrib import messages
 import csv, re, requests
+from django.contrib.auth.decorators import login_required
 from operator import *
 import datetime
 import time
 from django.utils.timezone import utc
 # from paste.util import multidict
 
+@login_required
 def deadline(request):
     usr = request.user
     user = User_profile.objects.get(user_profile=usr)
@@ -43,7 +45,7 @@ def sorting(usr, Students):
         if i.Class_chosen!=None:
             done_and_sorted[i.Class_chosen.Class].append(i)
     return (done_and_sorted,Preferences)
-
+@login_required
 def Publish(request):
     usr = request.user
     ## School = SchoolProfile.objects.get(school_profile=usr)
@@ -126,7 +128,7 @@ def register(request):
             login(request, usr)
             return HttpResponseRedirect(reverse('crush:school_profile'))
     return HttpResponseRedirect(reverse('index'))
-
+@login_required
 def edit_class(request):
     ClassInfo = request.POST
     usr = request.user
@@ -153,6 +155,7 @@ def edit_class(request):
     course.save()
     return HttpResponseRedirect(reverse('crush:school_profile'))
 
+@login_required
 def deleted(request):
     ClassInfo = request.POST
     ClassName = ClassInfo["ClassName"]
@@ -162,6 +165,7 @@ def deleted(request):
         p.delete()
     c.delete()
     return HttpResponseRedirect(reverse('crush:school_profile'))
+
 
 def user_access(request):
     StudentInfo = request.POST
@@ -175,7 +179,7 @@ def user_access(request):
     else:
         messages.add_message(request, messages.ERROR, 'Your username or password is invalid')
         return HttpResponseRedirect(reverse('crush:index'))
-
+@login_required
 def userview(request):
     usr = request.user
     Student = User_profile.objects.get(user_profile=usr)
@@ -187,7 +191,7 @@ def userview(request):
             all_classes.append(i)
             # filter(School=School).filter(Grade=Student.Grade)
     return render(request, 'crush/userview.html', {'classes':all_classes, 'deadline':School.deadline})
-    
+@login_required
 def school_profile(request):
     usr = request.user
     not_entered = []
@@ -226,6 +230,7 @@ def log_in(request):
         messages.add_message(request, messages.ERROR, 'Your username or password is invalid')
         return HttpResponseRedirect(reverse('crush:index'))
 
+@login_required
 def addClass(request):
     ClassInfo = request.POST
     usr = request.user
@@ -257,6 +262,7 @@ def addClass(request):
     Class.save()
     return HttpResponseRedirect(reverse('crush:school_profile'))
 
+@login_required
 def addStudents(request):
     csvfile = request.FILES['spreadsheet']
     csvfile = csvfile.read()
@@ -296,7 +302,7 @@ def addStudents(request):
     messages.add_message(request, messages.SUCCESS, 'Students have successfuly been added')
     return HttpResponseRedirect(reverse('crush:school_profile'))
         
-   
+@login_required  
 def pref_reg(request):
     dataString = request.POST["data"]
     dataString = dataString.split(',')
@@ -340,6 +346,7 @@ def reverse_it(Dict):
             new_dict[j]=i
     return new_dict
 
+@login_required
 def switch(sort, preferenceDict, request):
     #sorted will be a dictionary with Classes as keys and students as values
     new_sort = []
@@ -363,6 +370,7 @@ def switch(sort, preferenceDict, request):
                         sort[class_1].append(student_2)
                         sort[class_2].append(student_1)
     return sort
+@login_required
 def run_the_sort (request):
     
     #school = SchoolProfile.objects.get(school_profile = request.user)
@@ -381,15 +389,15 @@ def run_the_sort (request):
             student.Class_chosen = pref
             student.save()
     return HttpResponseRedirect(reverse('crush:school_profile'))
-    
-    
+
+@login_required
 def usernameVal(request):
 	if request.method =="POST":
 		response_str="true"
 		if User.objects.filter(username=request.POST["SchoolName"]).exists():
 			response_str="false"
 	return HttpResponse("%s" % response_str)
-    
+@login_required    
 def change_prefs(request):
     new_class = request.POST["new_class"]
     student = request.POST["usr"]
