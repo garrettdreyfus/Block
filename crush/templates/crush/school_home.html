@@ -165,8 +165,14 @@
         </div>
     </div>
        <div class="alert">
-      <button type="button" class="close" data-dismiss="alert">&times;</button>
-      <strong>Note:</strong> Students have until <strong>{{deadline}}</strong> to submit your preferences.
+      <button type="button" class="close"
+        data-dismiss="alert">&times;</button>
+	 {% if deadline %}
+	 <strong>Note:</strong> Students have until
+        <strong>{{deadline}}</strong> to submit their preferences.
+	 {% else %}
+	 <strong>Note:</strong> No deadline has been set for submitting preferences.
+	 {% endif %}
     </div>
 <div class="navbar navbar-fixed-bottom teachnav">
   <div class="navbar-inner">

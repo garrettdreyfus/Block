@@ -48,18 +48,15 @@
   </head>
   <body>
 <br><br>
+{% if deadline %}
  <div class="alert" align="center">
       <button type="button" class="close" data-dismiss="alert">&times;</button>
-      You have until <strong>{{deadline}}</strong> to submit your preferences.
-    </div>
-    <div id="success-alert" class="alert alert-block alert-success fade in">
-      <button type="button" class="close" id="close-button">x</button>
-      <h4 class="alert-heading">Success!</h4>
-      <p id="alert-body">
-      Your Preferences have been noted!
-      </p>
-    </div>
-    <br>
+
+   You have until <strong>{{deadline}}</strong> to submit your preferences.
+
+ </div>
+ {% endif %}
+   
     <h1> Please order your preferences</h1>
     <ul id="sortable" name="sortable" >
       {% if classes %}
@@ -70,7 +67,15 @@
     </ul>
     <input class="btn" type="submit" value="Submit" id="submit"
         name="submit" />
-    <br><br><br><br><br><br>
+<br><br>
+     <div id="success-alert" class="alert alert-block alert-success fade in">
+      <button type="button" class="close" id="close-button">x</button>
+      <h4 class="alert-heading">Success!</h4>
+      <p id="alert-body">
+      Your Preferences have been noted!
+      </p>
+    </div>
+    <br><br><br><br>
    
 
     <div class="navbar navbar-fixed-bottom">
