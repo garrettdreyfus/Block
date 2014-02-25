@@ -171,10 +171,7 @@
     name="submit"/>
     </form>
 
-    <form action="Publish/" method="post" id="Publish" name="Publish" enctype="multipart/form-data">{% csrf_token %}
-        <input class="btn" type="submit" id="submit" value="Email Room Assignments" id="submit" name="submit"/>
-    </form>
-    
+ 
     <div id="deleteClassModal" class="modal hide fade" tabindex="-1" role="dialogue" aria-labelledby="myModalLabel" alt="add class">
         <div class="modal-header">
           <div class="pull-right close" data-dismiss="modal" aria-hidden="true" >x</div>
@@ -232,7 +229,7 @@
     <li class="divider-vertical"></li>
   <li><a href="#editClassModal" role="button" data-toggle="modal"">Edit a Class</a></li>
  <li class="divider-vertical"></li>
- <li><a href="Publish/" role="button">Publish Assignments</a></li>
+ <li><a href="Publish/" role="button">Email Room Assignments</a></li>
   <li class="divider-vertical"></li>
  <li><a href="#deadlineModal" role="button" data-toggle="modal">Set Deadline</a></li>
   <li class="divider-vertical"></li>
