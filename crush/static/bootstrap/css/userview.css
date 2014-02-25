@@ -2,10 +2,11 @@ body {
   padding-left:5%;
 }
 .ui-stat-default{
+    text-align: center;
     display:block;
-  width:250px;
-  height:50px;
-  line-height:50px;
+    width:250px;
+    height:50px;
+    line-height:50px;
 }
 .btn{
 	background-color:#fff;
@@ -21,4 +22,8 @@ body {
 }
 #success-alert{
   width:100%;
+}
+.navbar-inner {
+    font-size: 120%;
+    pull: right;
 }

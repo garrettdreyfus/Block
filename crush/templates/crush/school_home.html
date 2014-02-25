@@ -35,7 +35,7 @@
    
     <div class="row">
       <h1>{{School.school_profile.username}}</h1>
-      <h3>{{Entered_Fraction}} of students have entered their preferences</h3>
+      <h3 align="center">{{Entered_Fraction}} of students have entered their preferences</h3>
       {% if messages %}
         <div class="alert alert-error span10">
           {% for message in messages %}
@@ -70,24 +70,48 @@
               {% endif %}
         </div>
       </div>
-      <div id ="addClassModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" alt="add class">
-        <div class="modal-header">
-          <div class="pull-right close" data-dismiss="modal" aria-hidden="true"> x </div>
-          <h1>Add A Class</h1>
-        </div>
-        <div class="modal-body">
-          <form action="addClass/" method="post" id="addClass" name="addClass">{% csrf_token %}
+      <div id ="addSingleClassModal" class="modal hide fade" tabindex="-1"
+              role="dialog" arialabelledby="myModalLabel" alt="add
+              single class">
+	<div class="modal-header">
+	   <div class="pull-right close" data-dismiss="modal" aria-hidden="true"> x </div>
+	  <h3> Add a single class </h3>
+	  </div>
+	<div class="modal-body">
+	  <p>To add a single class, fill out the form below<p><hr>
+	  <form action="addSingleClass/" method="post" id="addSingleClass" name="addSingleClass">{% csrf_token %}
             <input class="span3" type="text" required placeholder="Class Name" name="ClassName" id="ClassName" required maxlength="100" />
             <input class="span2" type="number" placeholder="Max Occupancy" name="MO" min="1" max="360" required />
             <input class="span3" type="text" placeholder ="Teacher" name="Teacher" required /><input class="span2" type="text" placeholder ="Grade (ex. 6, 6-7, 6-8)" name="Grade" min="6" max="8" required />
             
-            <textarea class="form-control span7" placeholder = "Class Description" name="ClassDescription" id="ClassDescription" rows="4" required="true" maxlength=1000 ></textarea>
-            <div class="modal-footer">
-              <input class="btn" type="submit" value="Add"/>
-            </div>
+            <textarea class="form-control span5" placeholder = "Class Description" name="ClassDescription"id="ClassDescription" rows="4" required="true" maxlength=1000 ></textarea><br>
+	  <input class="btn" type="submit" value="Add"/>
+          </form>
+	</div>
+	</div>
+
+
+
+      <div id ="addMultipleClassModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" alt="add class">
+        <div class="modal-header">
+          <div class="pull-right close" data-dismiss="modal" aria-hidden="true"> x </div>
+          <h2> Please upload your spreadsheet below </h2>
+        </div>
+        <div class="modal-body">
+	  <p> To add multiple classes, upload a csv file. This file
+            should have the class name in the first column, the
+            class's teacher in the second column, the maximum number
+            of students in the third column, the grades the class will
+        be offered to, and the class's description in the fifth column.<p>
+	   <form action="addMultipleClasses/" method="post" id="addMultipleClasses" name="addMultipleClasses" enctype="multipart/form-data"> {% csrf_token %}
+            <br>
+            <input type="file" required name="spreadsheet" id="spreadsheet" accept=".csv" />
+            <input class="pull-right btn" type="submit" value="Upload" />
           </form>
         </div>
       </div>
+
+      
       <div id="addStudentsModal" class="modal hide fade" tabindex="-1" role="dialogue" aria-labelledby="myModalLabel" alt="add class">
         <div class="modal-header">
           <div class="pull-right close" data-dismiss="modal" aria-hidden="true" >x</div>
@@ -124,19 +148,19 @@
         </div>
       </div>
     </div>
+
+    
     
     <form action="run_the_sort/" method="post" id="addClass" name="addClass" enctype="multipart/form-data">{% csrf_token %}
-    <input class="btn span6" type="submit" value="Sort the students (don't worry you can run this multiple times)" id="submit" name="submit" />
+    <input  align="center" class="btn span6" type="submit" value="Sort the students (don't worry you can run this multiple times)" id="submit"
+    name="submit"/>
     </form>
 
-    <form action="Publish/" method="post" id="Publish" name="Publish" enctype="multipart/form-data">{% csrf_token %}
-        <input class="btn" type="submit" id="submit" value="Publish assignments" id="submit" name="submit"/>
-    </form>
     
     <div id="deleteClassModal" class="modal hide fade" tabindex="-1" role="dialogue" aria-labelledby="myModalLabel" alt="add class">
         <div class="modal-header">
           <div class="pull-right close" data-dismiss="modal" aria-hidden="true" >x</div>
-          <h1>Which class would you like to delete?</h1>
+          <h3>Which class would you like to delete?</h3><br>
         </div>
         <div class="modal-body">
           <form action="deleted/" method="post" id="addStudents" name="addStudents" enctype="multipart/form-data"> {% csrf_token %}
@@ -177,8 +201,11 @@
 <div class="navbar navbar-fixed-bottom teachnav">
   <div class="navbar-inner">
   <ul class="nav">
-   <li><a href="#addClassModal" role="button" data-toggle="modal"">Add
-  a class</a></li>
+   <li><a href="#addSingleClassModal" role="button" data-toggle="modal"">Add Single
+  Class</a></li>
+   <li class="divider-vertical"></li>
+   <li><a href="#addMultipleClassModal" role="button" data-toggle="modal"">Add Multiple
+  Classes</a></li>
    <li class="divider-vertical"></li>
     <li><a href="#addStudentsModal" role="button" data-toggle="modal"">Add students</a></li>
   <li class="divider-vertical"></li>
@@ -190,6 +217,8 @@
  <li><a href="Publish/" role="button">Publish Assignments</a></li>
   <li class="divider-vertical"></li>
  <li><a href="#deadlineModal" role="button" data-toggle="modal">Set Deadline</a></li>
+  <li class="divider-vertical"></li>
+   <li><a href="notSubmited/" role="button" data-toggle="modal">Student not submitted</a></li>
   <li class="divider-vertical"></li>
  <li><a href="logout_view/" role="button">Logout</a></li>
  

@@ -18,6 +18,24 @@ import time
 from django.utils.timezone import utc
 # from paste.util import multidict
 
+
+
+@login_required
+def notSubmited(request):
+    usr = request.user
+    user = User_profile.objects.get(user_profile=usr)
+    school = user.School
+    Students = User_profile.objects.filter(status='student')
+    all_stu = []
+    for student in Students:
+        hrandname = []
+        if student.Class_chosen_id == None:
+            stu_id = student.id
+            student2 = User.objects.get(id=stu_id)
+            hrandname.append(student2.username)
+            hrandname.append(student.Homeroom)
+        all_stu.append(hrandname)
+    return render(request, 'crush/notsubmitted.html', {'all_stu':all_stu})
 @login_required
 def deadline(request):
     usr = request.user
@@ -128,6 +146,7 @@ def register(request):
             login(request, usr)
             return HttpResponseRedirect(reverse('crush:school_profile'))
     return HttpResponseRedirect(reverse('index'))
+
 @login_required
 def edit_class(request):
     ClassInfo = request.POST
@@ -141,7 +160,7 @@ def edit_class(request):
     classes = []
     for course in Classes.objects.all():
 	    classes.append(course.Class_Name)
-    print classes
+    # print classes
     if oldName not in classes:
 	    messages.add_message(request, messages.ERROR, 'The class in the old name field is incorrect')
 	    return HttpResponseRedirect(reverse('crush:school_profile'))
@@ -159,6 +178,7 @@ def edit_class(request):
 def deleted(request):
     ClassInfo = request.POST
     ClassName = ClassInfo["ClassName"]
+    classes = Classes.objects.all()
     c = Classes.objects.get(Class_Name=ClassName)
     prefs = Preference.objects.filter(Class_id = c.id)
     for p in prefs:
@@ -191,9 +211,11 @@ def userview(request):
             all_classes.append(i)
             # filter(School=School).filter(Grade=Student.Grade)
     return render(request, 'crush/userview.html', {'classes':all_classes, 'deadline':School.deadline})
+
 @login_required
 def school_profile(request):
     usr = request.user
+    
     not_entered = []
     Admin = User_profile.objects.get(user_profile=usr)
     School = Admin.School
@@ -231,7 +253,49 @@ def log_in(request):
         return HttpResponseRedirect(reverse('crush:index'))
 
 @login_required
-def addClass(request):
+def addMultipleClasses(request):
+    csvfile = request.FILES['spreadsheet']
+    csvfile = csvfile.read()
+    usr = request.user
+    user = User_profile.objects.get(user_profile=usr)
+    school = user.School
+    rowsp= csvfile.split('\r')
+    rows=[]
+    print rowsp
+    for row in rowsp[1:]:
+        row = row.split(',')
+        if len(row)==0:
+            return HttpResponseRedirect(reverse('crush:school_profile'))
+        if len(row) < 5:
+            messages.add_message(request, messages.ERROR, "Row %s doesn't have enough fields" % row)
+            return HttpResponseRedirect(reverse('crush:school_profile'))
+        name = row[0]
+        teacher = row[1]
+        capacity = row[2]
+        grades = row[3]
+        ngrade = []
+        start = grades[0]
+        end = grades[-1]
+        description = row[4]
+        print "class information", name, teacher, capacity, ngrade, description
+        if len(grades) == 1:
+            ngrade.append(grades)
+        if len(grades) != 1:
+            for i in range(int(start), int(end)+1):
+                ngrade.append(i)
+        Class = Classes(
+            School=school,
+            Class_Name=name,
+            Class_Description=description,
+            Max_Occupancy=capacity,
+            Teacher=teacher,
+            Grade=ngrade,    
+            )
+        Class.save()
+    return HttpResponseRedirect(reverse('crush:school_profile'))
+
+@login_required
+def addSingleClass(request):
     ClassInfo = request.POST
     usr = request.user
     Admin = User_profile.objects.get(user_profile=usr)
@@ -244,13 +308,13 @@ def addClass(request):
     ngrade = []
     start = grade[0]
     end = grade[-1]
-    print start, end, type(start)
+    
     if len(grade) == 1:
         ngrade.append(int(grade))
     else:
         for i in range(int(start), int(end)+1):
             ngrade.append(i)
-    print ngrade
+    # print ngrade
     Class = Classes(
         School=School,
         Class_Name=Name,
@@ -274,7 +338,7 @@ def addStudents(request):
     rows=[]
     ## for i in rowsp:
     ##     rows.append(i.split(','))
-    for row in rowsp:
+    for row in rowsp[1:]:
         row = row.split(',')
         if len(row)==0:
             return HttpResponseRedirect(reverse('crush:school_profile'))
@@ -346,7 +410,6 @@ def reverse_it(Dict):
             new_dict[j]=i
     return new_dict
 
-@login_required
 def switch(sort, preferenceDict, request):
     #sorted will be a dictionary with Classes as keys and students as values
     new_sort = []
@@ -370,13 +433,14 @@ def switch(sort, preferenceDict, request):
                         sort[class_1].append(student_2)
                         sort[class_2].append(student_1)
     return sort
+
 @login_required
 def run_the_sort (request):
-    
     #school = SchoolProfile.objects.get(school_profile = request.user)
     allStudents = User_profile.objects.filter(status='student')
     studentandprefs = {}
-    for student in allStudents: studentandprefs[student]= Preference.objects.filter(student=student)
+    for student in allStudents:
+        studentandprefs[student]= Preference.objects.filter(student=student)
     # gotta sort studentandprefs
     for prefs in studentandprefs.keys():
         studentandprefs[prefs] = sorted( studentandprefs[prefs], key=attrgetter('rank'))
@@ -397,6 +461,7 @@ def usernameVal(request):
 		if User.objects.filter(username=request.POST["SchoolName"]).exists():
 			response_str="false"
 	return HttpResponse("%s" % response_str)
+    
 @login_required    
 def change_prefs(request):
     new_class = request.POST["new_class"]

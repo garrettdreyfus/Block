@@ -57,8 +57,8 @@
  </div>
  {% endif %}
    
-    <h1> Please order your preferences</h1>
-    <ul id="sortable" name="sortable" >
+    <h1 align="center"> Please order your preferences</h1>
+    <ul id="sortable" name="sortable">
       {% if classes %}
         {% for class in classes %}
         <li class="ui-stat-default btn" name="{{class.Class_Name}}" id="{{class.Class_Name|slugify}}" rel="popover" value="{{class.Class_Name}}">{{class.Class_Name}}</li>
