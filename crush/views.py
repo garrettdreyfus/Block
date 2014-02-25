@@ -297,28 +297,33 @@ def addMultipleClasses(request):
             messages.add_message(request, messages.ERROR, "Row %s doesn't have enough fields" % row)
             return HttpResponseRedirect(reverse('crush:school_profile'))
         name = row[0]
-        teacher = row[1]
-        capacity = row[2]
-        grades = row[3]
-        ngrade = []
-        start = grades[0]
-        end = grades[-1]
-        description = row[4]
-        print "class information", name, teacher, capacity, ngrade, description
-        if len(grades) == 1:
-            ngrade.append(grades)
-        if len(grades) != 1:
-            for i in range(int(start), int(end)+1):
-                ngrade.append(i)
-        Class = Classes(
-            School=school,
-            Class_Name=name,
-            Class_Description=description,
-            Max_Occupancy=capacity,
-            Teacher=teacher,
-            Grade=ngrade,    
-            )
-        Class.save()
+        try:
+            r = Classes.objects.get(Class_Name=name)
+            messages.add_message(request, messages.ERROR, "Class %s already exists" % name)
+            return HttpResponseRedirect(reverse('crush:school_profile'))
+        except Classes.DoesNotExist:
+            teacher = row[1]
+            capacity = row[2]
+            grades = row[3]
+            ngrade = []
+            start = grades[0]
+            end = grades[-1]
+            description = row[4]
+            print "class information", name, teacher, capacity, ngrade, description
+            if len(grades) == 1:
+                ngrade.append(grades)
+            if len(grades) != 1:
+                for i in range(int(start), int(end)+1):
+                    ngrade.append(i)
+            Class = Classes(
+                School=school,
+                Class_Name=name,
+                Class_Description=description,
+                Max_Occupancy=capacity,
+                Teacher=teacher,
+                Grade=ngrade,    
+                )
+            Class.save()
     return HttpResponseRedirect(reverse('crush:school_profile'))
 
 @login_required
@@ -329,28 +334,32 @@ def addSingleClass(request):
     School = Admin.School
     Description = ClassInfo["ClassDescription"]
     Name = ClassInfo["ClassName"]
-    MO = ClassInfo["MO"]
-    teacher = ClassInfo["Teacher"]
-    grade = ClassInfo["Grade"]
-    ngrade = []
-    start = grade[0]
-    end = grade[-1]
-    
-    if len(grade) == 1:
-        ngrade.append(int(grade))
-    else:
-        for i in range(int(start), int(end)+1):
-            ngrade.append(i)
-    # print ngrade
-    Class = Classes(
-        School=School,
-        Class_Name=Name,
-        Class_Description=Description,
-        Max_Occupancy=MO,
-        Teacher=teacher,
-        Grade=ngrade,    
-    )
-    Class.save()
+    try:
+        r = Classes.objects.get(Class_Name=Name)
+        messages.add_message(request, messages.ERROR, "Class %s already exists" % Name)
+        return HttpResponseRedirect(reverse('crush:school_profile'))
+    except Classes.DoesNotExist:
+        MO = ClassInfo["MO"]
+        teacher = ClassInfo["Teacher"]
+        grade = ClassInfo["Grade"]
+        ngrade = []
+        start = grade[0]
+        end = grade[-1]
+        if len(grade) == 1:
+            ngrade.append(int(grade))
+        else:
+            for i in range(int(start), int(end)+1):
+                ngrade.append(i)
+        # print ngrade
+        Class = Classes(
+            School=School,
+            Class_Name=Name,
+            Class_Description=Description,
+            Max_Occupancy=MO,
+            Teacher=teacher,
+            Grade=ngrade,    
+        )
+        Class.save()
     return HttpResponseRedirect(reverse('crush:school_profile'))
 
 @login_required
