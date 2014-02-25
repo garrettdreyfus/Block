@@ -194,6 +194,10 @@ def user_access(request):
     usr = authenticate(username=Username, password=Password)
     if usr is not None:
         if usr.is_active:
+            if Preference.objects.filter(student = request.user) != None:
+                messages.add_message(request, messages.ERROR, "You've already submitted your preferences")
+                return HttpResponseRedirect(reverse('crush:index'))
+
             login(request, usr)            
             return HttpResponseRedirect(reverse('crush:userview'))
     else:
@@ -245,6 +249,29 @@ def log_in(request):
                 if school.deadline != None and datetime.datetime.utcnow().replace(tzinfo=utc) > school.deadline:
                     messages.add_message(request, messages.ERROR, 'Deadline to submit preferences has passed')
                     return HttpResponseRedirect(reverse('crush:index'))
+                return HttpResponseRedirect(reverse('crush:userview'))
+        else:
+            return HttpResponseRedirect(reverse('crush:index'))
+    else:
+        messages.add_message(request, messages.ERROR, 'Your username or password is invalid')
+        return HttpResponseRedirect(reverse('crush:index'))
+
+    username = request.POST['SchoolName']
+
+
+@login_required
+def log_in_master(request):
+    password = request.POST['SchoolPassword']
+    user = authenticate(username=username, password=password)
+    if user is not None:
+        if user.is_active:
+            login(request, user)
+            u = User.objects.get(username=username)
+            u = User_profile.objects.get(user_profile=u)
+            school = u.School
+            if u.status == 'admin':
+                return HttpResponseRedirect(reverse('crush:school_profile'))
+            else:
                 return HttpResponseRedirect(reverse('crush:userview'))
         else:
             return HttpResponseRedirect(reverse('crush:index'))
