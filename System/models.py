@@ -13,10 +13,10 @@ class SchoolProfile(models.Model):
 class Classes(models.Model):
     School = models.ForeignKey(SchoolProfile, related_name="school", null=True)
     Class_Name= models.CharField(max_length=100, null=False)
-    Class_Description= models.CharField(max_length=1000, null=True)
+    Class_Description= models.CharField(max_length=10000, null=True)
     Max_Occupancy = models.IntegerField(max_length=300)
     Grade = models.CharField(max_length=1000)
-    Teacher = models.CharField(max_length=20)
+    Teacher = models.CharField(max_length=100)
     def _unicode_(self):
         return (self.Class_Name)
     
