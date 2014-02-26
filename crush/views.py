@@ -14,7 +14,7 @@ import csv, re, requests
 from django.contrib.auth.decorators import login_required
 from operator import *
 import datetime
-import time
+import time, string
 from django.utils.timezone import utc
 # from paste.util import multidict
 
@@ -246,8 +246,11 @@ def log_in(request):
             if u.status == 'admin':
                 return HttpResponseRedirect(reverse('crush:school_profile'))
             else:
-                if school.deadline != None and datetime.datetime.utcnow().replace(tzinfo=utc) > school.deadline:
+                if school.deadline != None and datetime.datetime.utcnow().replace(tzinfo=utc) > school.deadline and Preference.objects.filter(student = request.user) != None:
                     messages.add_message(request, messages.ERROR, 'Deadline to submit preferences has passed')
+                    return HttpResponseRedirect(reverse('crush:index'))
+                if len(Preference.objects.filter(student = user)):
+                    messages.add_message(request, messages.ERROR, "You've already entered your Preferences")
                     return HttpResponseRedirect(reverse('crush:index'))
                 return HttpResponseRedirect(reverse('crush:userview'))
         else:
@@ -261,6 +264,7 @@ def log_in(request):
 
 @login_required
 def log_in_master(request):
+    username = request.POST['SchoolName']
     password = request.POST['SchoolPassword']
     user = authenticate(username=username, password=password)
     if user is not None:
@@ -297,6 +301,8 @@ def addMultipleClasses(request):
             messages.add_message(request, messages.ERROR, "Row %s doesn't have enough fields" % row)
             return HttpResponseRedirect(reverse('crush:school_profile'))
         name = row[0]
+        string.replace(name, "\n", "")
+        print name
         try:
             r = Classes.objects.get(Class_Name=name)
             messages.add_message(request, messages.ERROR, "Class %s already exists" % name)
@@ -309,7 +315,7 @@ def addMultipleClasses(request):
             start = grades[0]
             end = grades[-1]
             description = row[4]
-            print "class information", name, teacher, capacity, ngrade, description
+            print "class information", name, teacher, capacity, ngrade, description, type(description)
             if len(grades) == 1:
                 ngrade.append(grades)
             if len(grades) != 1:
@@ -399,7 +405,6 @@ def addStudents(request):
                 status = admin_bol
             )
             student.save()
-    messages.add_message(request, messages.SUCCESS, 'Students have successfuly been added')
     return HttpResponseRedirect(reverse('crush:school_profile'))
         
 @login_required  

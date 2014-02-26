@@ -35,15 +35,15 @@
             $("#alert-body").html("You preferences have been changed!");
           changeCount++;
           $(".alert").alert();
-          $("#success-alert").show();
           var postUrl = "pref_reg/";
-          var prefs = $("#sortable").sortable("toArray");
+var prefs = $("#sortable").sortable("toArray");
           prefs = idsToArray(prefs);
           var dataString = prefs.join(',');
           var data = {"data": dataString,csrfmiddlewaretoken:'{{csrf_token}}' };
           $.post(postUrl, data);
+window.history.go(-1);
         });
-      });
+});
     </script>
   </head>
   <body>
@@ -65,6 +65,7 @@
         {% endfor %}
       {% endif %}
     </ul>
+    <p>You can only submit preferences once!</p>
     <input class="btn" type="submit" value="Submit" id="submit"
         name="submit" />
 <br><br>

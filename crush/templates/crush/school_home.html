@@ -127,6 +127,7 @@
           </form>
         </div>
       </div>
+      
        <div id="loginAfterDeadline" class="modal hide fade" tabindex="-1" role="dialogue" aria-labelledby="myModalLabel" alt="add class">
         <div class="modal-header">
           <div class="pull-right close" data-dismiss="modal" aria-hidden="true" >x</div>
@@ -152,10 +153,11 @@
           <form action="edit_class/" method="post" id="editClass" name="editClass">{% csrf_token %}
             <input class="span4" type="text" required="true" placeholder="Old Class Name" name="OldName" id="OldName" maxlength="100" />
             <input class="span4" type="text" required="true" placeholder="New Class Name" name="Class_Name" id="Class_Name" maxlength="100" />
-            <input class="span1" type="number" name="MO" min="1" max="300" required="true" />
+            <input class="span2" type="number" placeholder="Max Occupancy" name="MO" min="1" max="300" required="true" />
+	  <input class="span4" type="text" placeholder="Teacher Name" name="Teacher" id="Teacher" required="true" maxlength=20 />
             <input class="span2" type="text" placeholder="Grade" name="Grade" min="6" max="8" required="true" />
             <textarea class="form-control span7" placeholder="Class Description" name="description" id="description" rows="4" required = "true"></textarea>
-            <input class="span4" type="text" placeholder="Teacher Name" name="Teacher" id="Teacher" required="true" maxlength=20 />
+            
             <div class="modal-footer">
               <input class="btn" type="submit" value="Edit">
             </div>
@@ -234,6 +236,8 @@
  <li><a href="#deadlineModal" role="button" data-toggle="modal">Set Deadline</a></li>
   <li class="divider-vertical"></li>
    <li><a href="notSubmited/" role="button" data-toggle="modal">Student not submitted</a></li>
+  <li class="divider-vertical"></li>
+  <li><a href="#loginAfterDeadline" role="button" data-toggle="modal">Login</a></li>
   <li class="divider-vertical"></li>
  <li><a href="logout_view/" role="button">Logout</a></li>
  
