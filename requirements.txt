@@ -6,3 +6,4 @@ static==0.4
 wsgiref==0.1.2
 psycopg2==2.5.2
 gunicorn==18.0
+requests==2.2.1
