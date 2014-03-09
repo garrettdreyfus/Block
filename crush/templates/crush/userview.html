@@ -19,8 +19,8 @@
           $("#success-alert").hide();
         });
         {% for o in classes %}
-          var {{o.Class_Name|cut:'-'|cut:' '|cut:'.'}} = '<i> {{o.Class_Description|escapejs|cut:'.'}} </i>' ;
-        $("#"+"{{o.Class_Name|slugify}}").popover({trigger: "click", content: {{o.Class_Name|cut:'-'|cut:' '|cut:'.'}}, html:true , title: '{{o.Teacher|escapejs}}' });
+          var {{o.Class_Name|cut:'-'|cut:' '|cut:":"|cut:'.'}} = '<i> {{o.Class_Description|escapejs|cut:'.'}} </i>' ;
+        $("#"+"{{o.Class_Name|slugify}}").popover({trigger: "click", content: {{o.Class_Name|cut:":"|cut:'-'|cut:' '|cut:'.'}}, html:true , title: '{{o.Teacher|escapejs}}' });
         {% endfor %}
         function idsToArray(ids) {
           var values = [];
