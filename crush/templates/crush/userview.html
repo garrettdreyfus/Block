@@ -40,7 +40,6 @@ var prefs = $("#sortable").sortable("toArray");
           var dataString = prefs.join(',');
           var data = {"data": dataString,csrfmiddlewaretoken:'{{csrf_token}}' };
           $.post(postUrl, data);
-window.history.go(-1);
         });
 });
     </script>
