@@ -194,7 +194,7 @@ def user_access(request):
     usr = authenticate(username=Username, password=Password)
     if usr is not None:
         if usr.is_active:
-            if Preference.objects.filter(student = request.user) != None:
+            if Preference.objects.filter(student = request.user):
                 messages.add_message(request, messages.ERROR, "You've already submitted your preferences")
                 return HttpResponseRedirect(reverse('crush:index'))
 
@@ -422,7 +422,6 @@ def pref_reg(request):
         )
         pref.save()
         p+=1
-    return HttpResponseRedirect(reverse('crush:index'))
 
 def sort( preferenceDict,request):
     #preferenceDict is a dict with student objects as keys and 
