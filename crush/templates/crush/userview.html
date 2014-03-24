@@ -40,7 +40,7 @@ var prefs = $("#sortable").sortable("toArray");
           var data = {"data": dataString,csrfmiddlewaretoken:'{{csrf_token}}' };
           console.log(data);  	
           $.post(postUrl, data);
-	  window.location='/logout_view';
+	  window.location='logout_view';
         });
 });
     </script>
@@ -81,7 +81,7 @@ var prefs = $("#sortable").sortable("toArray");
     <div class="navbar navbar-fixed-bottom">
       <div class="navbar-inner">
   <ul class="nav">
- <li><a href="logout_view/" role="button">Logout</a></li>
+ <li><a href="userview/logout_view/" role="button">Logout</a></li>
   </ul>
   </div>
 </div>
