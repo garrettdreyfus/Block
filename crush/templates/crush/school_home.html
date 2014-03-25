@@ -44,6 +44,7 @@
         </div>
       {% endif %}
       <div class="accordion" id="accordion_2">
+	<p align="center">There are {{ done_and_sorted.items|length }} classes</p>
         {% if done_and_sorted.items %}
           {% for i in done_and_sorted.items %}
             <div class="accordion-group">
@@ -105,7 +106,7 @@
         be offered to, and the class's description in the fifth column.<p>
 	   <form action="addMultipleClasses/" method="post" id="addMultipleClasses" name="addMultipleClasses" enctype="multipart/form-data"> {% csrf_token %}
             <br>
-            <input type="file" required name="spreadsheet" id="spreadsheet" accept=".csv" />
+            <input type="file" required name="spreadsheet" id="spreadsheet" accept=".txt" />
             <input class="pull-right btn" type="submit" value="Upload" />
           </form>
         </div>
@@ -215,6 +216,8 @@
 	 <strong>Note:</strong> No deadline has been set for submitting preferences.
 	 {% endif %}
     </div>
+
+    <br> <br> <br> <br>
 <div class="navbar navbar-fixed-bottom teachnav">
   <div class="navbar-inner">
   <ul class="nav">

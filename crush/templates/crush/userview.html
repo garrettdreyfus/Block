@@ -19,7 +19,7 @@
           $("#success-alert").hide();
         });
         {% for o in classes %}
-		$("#"+"{{o.Class_Name|slugify}}").popover({trigger: "click", content: '<i> {{o.Class_Description|escapejs|cut:'.'}} </i>' , html:true , title: '{{o.Teacher|escapejs}}' });
+		$("#"+"{{o.Class_Name|slugify}}").popover({trigger: "click", content: '<i> {{o.Class_Description|escapejs|cut:'.'}} </i>' , html:true , title: 'TBD' });
 	{% endfor %}
         function idsToArray(ids) {
           var values = [];
@@ -40,7 +40,7 @@ var prefs = $("#sortable").sortable("toArray");
           var data = {"data": dataString,csrfmiddlewaretoken:'{{csrf_token}}' };
           console.log(data);  	
           $.post(postUrl, data);
-	  window.location='logout_view';
+window.location='logout_view';
         });
 });
     </script>
@@ -57,7 +57,7 @@ var prefs = $("#sortable").sortable("toArray");
  {% endif %}
    
     <h1 align="center"> Please order your preferences</h1>
-    <ul id="sortable" name="sortable">
+    <ul algin="center" id="sortable" name="sortable">
       {% if classes %}
         {% for class in classes %}
         <li class="ui-stat-default btn" name="{{class.Class_Name}}" id="{{class.Class_Name|slugify}}" rel="popover" value="{{class.Class_Name}}">{{class.Class_Name}}</li>

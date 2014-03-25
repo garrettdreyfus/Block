@@ -238,6 +238,7 @@ def log_in(request):
     password = request.POST['SchoolPassword']
     user = authenticate(username=username, password=password)
     if user is not None:
+        print "DEBUG1:", Preference.objects.filter(student_id = user)
         if user.is_active:
             login(request, user)
             u = User.objects.get(username=username)
@@ -249,7 +250,8 @@ def log_in(request):
                 if school.deadline != None and datetime.datetime.utcnow().replace(tzinfo=utc) > school.deadline:
                     messages.add_message(request, messages.ERROR, 'Deadline to submit preferences has passed')
                     return HttpResponseRedirect(reverse('crush:index'))
-                if Preference.objects.filter(student = user) != None:
+                if str(Preference.objects.filter(student_id = user)) != "[]":
+                    print "DEBUG:", Preference.objects.filter(student_id = user), type(Preference.objects.filter(student_id = user))
                     messages.add_message(request, messages.ERROR, "You've already entered your Preferences")
                     return HttpResponseRedirect(reverse('crush:index'))
                 return HttpResponseRedirect(reverse('crush:userview'))
@@ -292,9 +294,8 @@ def addMultipleClasses(request):
     school = user.School
     rowsp= csvfile.split('\r')
     rows=[]
-    print rowsp
     for row in rowsp[1:]:
-        row = row.split(',')
+        row = row.split('\t')
         if len(row)==0:
             return HttpResponseRedirect(reverse('crush:school_profile'))
         if len(row) < 5:
@@ -307,18 +308,22 @@ def addMultipleClasses(request):
             continue
         except Classes.DoesNotExist:
             teacher = row[1]
-            capacity = row[2]
+            capacity = row[4]
             grades = row[3]
+            grades = grades.replace('\"', "")
             ngrade = []
             start = grades[0]
             end = grades[-1]
-            description = row[4]
-            print "class information", name, teacher, capacity, ngrade, description, type(description)
-            if len(grades) == 1:
-                ngrade.append(grades)
+            description = row[2]
             if len(grades) != 1:
-                for i in range(int(start), int(end)+1):
-                    ngrade.append(i)
+                try:
+                    s = int(start)
+                    e = int(end)
+                    for i in range(s, e+1):
+                        ngrade.append(i)
+                except:
+                    messages.add_message(request, messages.ERROR, "Grade info entered incorrecly (%s,%s) for row %s" % (start, end, row))
+                    continue
             Class = Classes(
                 School=school,
                 Class_Name=name,
@@ -327,7 +332,10 @@ def addMultipleClasses(request):
                 Teacher=teacher,
                 Grade=ngrade,    
                 )
-            Class.save()
+            try:
+                Class.save()
+            except:
+                messages.add_message(request, messages.ERROR, "Weird characters in row %s" % row)
     return HttpResponseRedirect(reverse('crush:school_profile'))
 
 @login_required
@@ -382,18 +390,23 @@ def addStudents(request):
         row = row.split(',')
         if len(row)==0:
             return HttpResponseRedirect(reverse('crush:school_profile'))
-        if len(row) < 7:
+        if len(row) < 6:
             messages.add_message(request, messages.ERROR, "Row %s doesn't have enough fields" % row)
             return HttpResponseRedirect(reverse('crush:school_profile'))
         username = row[1].lower() + row[0].lower()
-	username = re.sub(r'\s', '', username)
+        username = username.replace(" ", "")
+        username = username[0:30]
+        print username, len(username)
         if len(User.objects.filter(username= username))==0:
             user = User.objects.create_user(username)
             admin_bol = row[4].lower()
             user.set_password(row[2])
             user.first_name = row[0]
             user.last_name = row[1]
-            user.email = row[6]
+            print row[4]
+            if str(row[4]) == 'student':
+                print "GOT HERE"
+                user.email = ""
             user.save()
             student = User_profile(
                 user_profile=user,
@@ -422,6 +435,7 @@ def pref_reg(request):
         )
         pref.save()
         p+=1
+    return HttpResponse(status=201)
 
 def sort( preferenceDict,request):
     #preferenceDict is a dict with student objects as keys and 
