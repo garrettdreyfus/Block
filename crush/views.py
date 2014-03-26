@@ -121,7 +121,7 @@ def register(request):
     Email = SchoolInfo["Email"]
     if Password != Check_password:
         messages.add_message(request, messages.ERROR, 'Passwords did not match')
-        return HttpResponseRedirect(reverse('index'))
+    	return HttpResponseRedirect(reverse('crush:index'))
     if SchoolProfile.objects.filter(name = Schoolname).count()>0:
         return HttpResponse("School already exists")
     Usr = User.objects.create_user(Admin_name, Email, Password)
