@@ -301,20 +301,21 @@ def addMultipleClasses(request):
         if len(row) < 5:
             messages.add_message(request, messages.ERROR, "Row %s doesn't have enough fields" % row)
             return HttpResponseRedirect(reverse('crush:school_profile'))
-        name = row[0]
+        name = row[0].decode('utf-8', 'ignore')
         try:
             r = Classes.objects.get(Class_Name=name)
             messages.add_message(request, messages.ERROR, "Class %s already exists" % name)
             continue
         except Classes.DoesNotExist:
-            teacher = row[1]
+            teacher = row[1].decode('utf-8', 'ignore')
             capacity = row[4]
             grades = row[3]
             grades = grades.replace('\"', "")
             ngrade = []
+            print row
             start = grades[0]
             end = grades[-1]
-            description = row[2]
+            description = row[2].decode('utf-8', 'ignore')
             if len(grades) != 1:
                 try:
                     s = int(start)
