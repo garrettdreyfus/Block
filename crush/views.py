@@ -223,7 +223,7 @@ def school_profile(request):
     not_entered = []
     Admin = User_profile.objects.get(user_profile=usr)
     School = Admin.School
-    Students = User_profile.objects.filter(status='student')
+    Students = User_profile.objects.filter(status='student',School=School )
     (done_and_sorted, Preferences) = sorting(usr, Students)
     for i in Students:
         if len(Preference.objects.filter(student=i)) == 0:
@@ -490,7 +490,7 @@ def switch(sort, preferenceDict, request):
 @login_required
 def run_the_sort (request):
     #school = SchoolProfile.objects.get(school_profile = request.user)
-    allStudents = User_profile.objects.filter(status='student')
+    allStudents = User_profile.objects.filter(status='student', School=request.user.School)
     studentandprefs = {}
     for student in allStudents:
         studentandprefs[student]= Preference.objects.filter(student=student)
