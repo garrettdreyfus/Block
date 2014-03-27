@@ -224,13 +224,15 @@ def school_profile(request):
     Admin = User_profile.objects.get(user_profile=usr)
     School = Admin.School
     Students = User_profile.objects.filter(status='student',School=School )
-    #(done_and_sorted, Preferences) = sorting(usr, Students)
     (done_and_sorted, Preferences) = ([],[])
+    for i in Classes.objects.all():
+    	done_and_sorted[i]=[]
     for i in Students:
         if len(Preference.objects.filter(student=i)) == 0:
             not_entered.append(i)
     if len(Students) == len(not_entered):
         Entered_Fraction = "0/" + str(len(Students))
+
     Entered_Fraction = str(len(Students)-len(not_entered)) + ' / ' + str(len(Students))
     return render(request, 'crush/school_home.html', {'Students':Students,'Entered_Fraction':Entered_Fraction,'done_and_sorted':done_and_sorted,'Preferences':Preferences, 'deadline':School.deadline})
     
