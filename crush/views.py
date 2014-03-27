@@ -224,7 +224,7 @@ def school_profile(request):
     Admin = User_profile.objects.get(user_profile=usr)
     School = Admin.School
     Students = User_profile.objects.filter(status='student',School=School )
-    (done_and_sorted, Preferences) = sorting(usr, Students)
+    #(done_and_sorted, Preferences) = sorting(usr, Students)
     for i in Students:
         if len(Preference.objects.filter(student=i)) == 0:
             not_entered.append(i)
