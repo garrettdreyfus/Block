@@ -224,7 +224,7 @@ def school_profile(request):
     Admin = User_profile.objects.get(user_profile=usr)
     School = Admin.School
     Students = User_profile.objects.filter(status='student',School=School )
-    (done_and_sorted, Preferences) = ([],[])
+    (done_and_sorted, Preferences) = ({},[])
     for i in Classes.objects.all():
     	done_and_sorted[i]=[]
     for i in Students:
