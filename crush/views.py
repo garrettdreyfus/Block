@@ -253,7 +253,7 @@ def log_in(request):
                 if school.deadline != None and datetime.datetime.utcnow().replace(tzinfo=utc) > school.deadline:
                     messages.add_message(request, messages.ERROR, 'Deadline to submit preferences has passed')
                     return HttpResponseRedirect(reverse('crush:index'))
-                if len(Preference.objects.filter(student_id = user))==0:
+                if len(Preference.objects.filter(student_id = u))!=0:
                     messages.add_message(request, messages.ERROR, "You've already entered your Preferences")
                     return HttpResponseRedirect(reverse('crush:index'))
                 return HttpResponseRedirect(reverse('crush:userview'))
