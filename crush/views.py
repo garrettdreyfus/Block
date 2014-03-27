@@ -493,7 +493,7 @@ def switch(sort, preferenceDict, request):
 @login_required
 def run_the_sort (request):
     #school = SchoolProfile.objects.get(school_profile = request.user)
-    allStudents = User_profile.objects.filter(status='student', School=request.user.School)
+    allStudents = User_profile.objects.filter(status='student')
     studentandprefs = {}
     for student in allStudents:
         studentandprefs[student]= Preference.objects.filter(student=student)
