@@ -99,11 +99,12 @@
           <h2> Please upload your spreadsheet below </h2>
         </div>
         <div class="modal-body">
-	  <p> To add multiple classes, upload a csv file. This file
+	  <p> To add multiple classes, upload a tab-separated csv file. This file
             should have the class name in the first column, the
-            class's teacher in the second column, the maximum number
-            of students in the third column, the grades the class will
-        be offered to, and the class's description in the fifth column.<p>
+            class's teacher in the second column, the description of
+        the class in the third column, the grades the class will
+        be offered to in the fourth column, and the maximum number of
+        people in the class in the fifth column.<p>
 	   <form action="addMultipleClasses/" method="post" id="addMultipleClasses" name="addMultipleClasses" enctype="multipart/form-data"> {% csrf_token %}
             <br>
             <input type="file" required name="spreadsheet" id="spreadsheet" accept=".txt" />
@@ -121,7 +122,14 @@
         <div class="modal-body">
           <form action="addStudents/" method="post" id="addStudents" name="addStudents" enctype="multipart/form-data"> {% csrf_token %}
             <div>Please upload the spreadsheet containing student names and passwords</div>
-            <div> with names in column a and passwords in column b</div>
+            <div> This file should be in the following format:
+	    1st column: User's first name
+	    2nd column: User's last name
+	    3rd column: User's password
+	    4th column: User's grade
+	    5th column: User's status (either 'admin' or 'student')
+	    6th column: User's Homeroom (optional if user is admin)
+	    7th column: User's email (optional if user is 'student')</div>
             <br>
             <input type="file" required name="spreadsheet" id="spreadsheet" accept=".csv" />
             <input class="pull-right btn" type="submit" value="Add" />
