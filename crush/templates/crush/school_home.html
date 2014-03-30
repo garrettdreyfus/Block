@@ -9,27 +9,6 @@
 	  <script src="../../static/javascripts/jquery-validate.js"></script>
 	  <script src="../../static/javascripts/bootstrap-alert.js"></script>
 		<link rel="stylesheet" href="../../static/bootstrap/css/school_home.css">    
-    <script type="text/javascript" charset="utf-8">
-      $(document).ready(function() {
-        {% for o in Students %}
-          {% for j in Preferences.items %}
-            {% if j.0 == o %}
-              var items = [];
-              {% for k in j.1 %}
-                items.push( "{{k}}" );
-              {% endfor %}
-              var {{o.user_profile.username|slugify}} = '<h10><a href="#" student="{{o.user_profile.username|slugify}}" class="changeClass">'+items.join(',</a> <a href="#" class="changeClass">')+' </a></h10>' ;
-            {% endif %}
-          {% endfor %}
-          $("##{o.user_profile.username|slugify}").popover({trigger: "click",html:true, container: 'body', content:{{o.user_profile.username|slugify}}});
-          {% endfor %}
-      });
-      $(document).on("click", ".changeClass", function() {
-        $.post("change_prefs/", {new_class:$(this).html(), usr:$(this).attr("student"),},
-          function(result) {
-        });
-      });
-    </script>
   </head>
   <body>
    
