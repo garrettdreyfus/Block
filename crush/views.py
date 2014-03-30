@@ -238,7 +238,6 @@ def log_in(request):
     password = request.POST['SchoolPassword']
     user = authenticate(username=username, password=password)
     if user is not None:
-        print "DEBUG1:", Preference.objects.filter(student_id = user)
         if user.is_active:
             login(request, user)
             u = User.objects.get(username=username)
@@ -250,8 +249,7 @@ def log_in(request):
                 if school.deadline != None and datetime.datetime.utcnow().replace(tzinfo=utc) > school.deadline:
                     messages.add_message(request, messages.ERROR, 'Deadline to submit preferences has passed')
                     return HttpResponseRedirect(reverse('crush:index'))
-                if str(Preference.objects.filter(student_id = user)) != "[]":
-                    print "DEBUG:", Preference.objects.filter(student_id = user), type(Preference.objects.filter(student_id = user))
+                if str(Preference.objects.filter(student_id = u.id)) != "[]":
                     messages.add_message(request, messages.ERROR, "You've already entered your Preferences")
                     return HttpResponseRedirect(reverse('crush:index'))
                 return HttpResponseRedirect(reverse('crush:userview'))
@@ -489,8 +487,10 @@ def switch(sort, preferenceDict, request):
 
 @login_required
 def run_the_sort (request):
-    #school = SchoolProfile.objects.get(school_profile = request.user)
-    allStudents = User_profile.objects.filter(status='student', School=request.user.School)
+    usr = request.user
+    user = User_profile.objects.get(user_profile=usr)
+    school = user.School
+    allStudents = User_profile.objects.filter(status='student', School=school)
     studentandprefs = {}
     for student in allStudents:
         studentandprefs[student]= Preference.objects.filter(student=student)
