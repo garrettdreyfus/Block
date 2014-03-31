@@ -434,6 +434,7 @@ def pref_reg(request):
         )
         pref.save()
         p+=1
+    messages.add_message(request, messages.SUCCESS, "Your preferences have been noted")
     return HttpResponse(status=201)
 
 def sort( preferenceDict,request):

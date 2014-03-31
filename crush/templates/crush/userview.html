@@ -19,7 +19,7 @@
           $("#success-alert").hide();
         });
         {% for o in classes %}
-		$("#"+"{{o.Class_Name|slugify}}").popover({trigger: "click", content: '<i> {{o.Class_Description|escapejs|cut:'.'}} </i>' , html:true , title: 'TBD' });
+		$("#"+"{{o.Class_Name|slugify}}").popover({trigger: "click", content: '<i> {{o.Class_Description|escapejs|cut:'.'}} </i>' , html:true , title: 'Teacher: TBD' });
 	{% endfor %}
         function idsToArray(ids) {
           var values = [];
@@ -30,7 +30,7 @@
         }
         $("#submit").on("click", function(e){
           if(changeCount>1) 
-            $("#alert-body").html("You preferences have been changed!");
+              window.alert("Your preferences have been noted");
           changeCount++;
           $(".alert").alert();
           var postUrl = "pref_reg/";
@@ -40,7 +40,7 @@ var prefs = $("#sortable").sortable("toArray");
           var data = {"data": dataString,csrfmiddlewaretoken:'{{csrf_token}}' };
           console.log(data);  	
           $.post(postUrl, data);
-window.location='logout_view';
+          window.location='logout_view';
         });
 });
     </script>
@@ -64,7 +64,9 @@ window.location='logout_view';
         {% endfor %}
       {% endif %}
     </ul>
-    <p>You can only submit preferences once!</p>
+    <b>You can only submit preferences once! After you have submitted
+    your preferences, you will be logged out, and you will not be able to
+    log in after. </b><br>
     <input class="btn" type="submit" value="Submit" id="submit"
         name="submit" />
 <br><br>
