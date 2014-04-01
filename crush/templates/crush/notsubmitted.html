@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html> <head>
+		<link rel="stylesheet" href="../../static/bootstrap/css/bootstrap.css">
+	  <script src="../../static/javascripts/jquery.js"></script>
+    <script src="../../static/bootstrap/js/bootstrap.js"></script>
+	  <script src="../../static/javascripts/login.js"></script>
+	  <script src="../../static/javascripts/regpop.js"></script>
+	  <script src="../../static/javascripts/jquery-ui-1.10.3.custom.min.js"></script>
+	  <script src="../../static/javascripts/jquery-validate.js"></script>
+	  <script src="../../static/javascripts/bootstrap-alert.js"></script>
+		<link rel="stylesheet" href="../../static/bootstrap/css/school_home.css">    
+</head>
+
+<body>
+<br><br><br>
+<h1 align="center">Students not submitted</h1>
+<br><br>
+<table class="table table-bordered" align="center">
+  <tr><th>Username</th><th>Homeroom</th>
+{% for student in all_stu %}
+   <tr>
+  {% for hrandname in student %}
+     <td>{{ hrandname }}</td>
+  {% endfor %}
+     </tr>
+  
+{% endfor %}
+</table>
+
+<div class="navbar navbar-fixed-top teachnav">
+  <div class="navbar-inner">
+  <ul class="nav">
+   <li><a role="button" onClick="javascript:history.go(-1);">Back to home page</a></li>
+  </ul>
+  </div>
+  </div>
+</body> </html>
