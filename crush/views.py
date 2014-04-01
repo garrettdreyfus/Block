@@ -249,9 +249,9 @@ def log_in(request):
                 if school.deadline != None and datetime.datetime.utcnow().replace(tzinfo=utc) > school.deadline:
                     messages.add_message(request, messages.ERROR, 'Deadline to submit preferences has passed')
                     return HttpResponseRedirect(reverse('crush:index'))
-                if str(Preference.objects.filter(student_id = u.id)) != "[]":
-                    messages.add_message(request, messages.ERROR, "You've already entered your Preferences")
-                    return HttpResponseRedirect(reverse('crush:index'))
+                ## if str(Preference.objects.filter(student_id = u.id)) != "[]":
+                ##     messages.add_message(request, messages.ERROR, "You've already entered your Preferences")
+                ##     return HttpResponseRedirect(reverse('crush:index'))
                 return HttpResponseRedirect(reverse('crush:userview'))
         else:
             return HttpResponseRedirect(reverse('crush:index'))
@@ -309,20 +309,23 @@ def addMultipleClasses(request):
             capacity = row[4]
             grades = row[3]
             grades = grades.replace('\"', "")
-            ngrade = []
             print row
-            start = grades[0]
-            end = grades[-1]
             description = row[2].decode('utf-8', 'ignore')
             if len(grades) != 1:
+                ngrade = []
+                start = grades[0]
+                end = grades[-1]
                 try:
                     s = int(start)
                     e = int(end)
+                    print "DEBUG:", s, e, name
                     for i in range(s, e+1):
                         ngrade.append(i)
                 except:
                     messages.add_message(request, messages.ERROR, "Grade info entered incorrecly (%s,%s) for row %s" % (start, end, row))
                     continue
+            else:
+                ngrade = grades
             Class = Classes(
                 School=school,
                 Class_Name=name,
@@ -395,16 +398,16 @@ def addStudents(request):
         username = row[1].lower() + row[0].lower()
         username = username.replace(" ", "")
         username = username[0:30]
-        print username, len(username)
+        #print username, len(username)
         if len(User.objects.filter(username= username))==0:
             user = User.objects.create_user(username)
             admin_bol = row[4].lower()
             user.set_password(row[2])
             user.first_name = row[0]
             user.last_name = row[1]
-            print row[4]
+            #print row[4]
             if str(row[4]) == 'student':
-                print "GOT HERE"
+                #print "GOT HERE"
                 user.email = ""
             user.save()
             student = User_profile(
