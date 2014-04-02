@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html> <head>
+ <link rel="stylesheet" href="../../static/bootstrap/css/bootstrap.css">
+	  <script src="../../static/javascripts/jquery.js"></script>
+    <script src="../../static/bootstrap/js/bootstrap.js"></script>
+	  <script src="../../static/javascripts/login.js"></script>
+	  <script src="../../static/javascripts/regpop.js"></script>
+	  <script src="../../static/javascripts/jquery-ui-1.10.3.custom.min.js"></script>
+	  <script src="../../static/javascripts/jquery-validate.js"></script>
+	  <script src="../../static/javascripts/bootstrap-alert.js"></script>
+<title>Thank you!</title>
+</head>
+
+<body>
+<h1></h1>
+
+<h3 align="center">Thank you for submitting your preferences! They are
+listed in order of preference.</h3>
+<table align="center">
+{% for pref in prefs %}
+ <tr>
+    <td width="40px">{{forloop.counter}}.</td>
+    <td>{{pref.Class.Class_Name}}</td>
+</tr>
+{% endfor %}
+</table>
+
+<div class="navbar navbar-fixed-bottom">
+<div class="navbar-inner">
+  <ul class="nav">
+    <li><a href="logout_view/" role="button">Logout</a></li>
+  </ul>
+</div>
+</div>
+</body> </html>

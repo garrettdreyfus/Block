@@ -29,18 +29,18 @@
           return values;
         }
         $("#submit").on("click", function(e){
-          if(changeCount>1) 
+          if(changeCount>0) 
               window.alert("Your preferences have been noted");
           changeCount++;
           $(".alert").alert();
           var postUrl = "pref_reg/";
 var prefs = $("#sortable").sortable("toArray");
           prefs = idsToArray(prefs);
-          var dataString = prefs.join(',');
+          var dataString = prefs.join(';');
           var data = {"data": dataString,csrfmiddlewaretoken:'{{csrf_token}}' };
-          console.log(data);  	
-          $.post(postUrl, data);
-          window.location='logout_view';
+          $.post(postUrl, data, function(){
+          window.location='success';
+          });
         });
 });
     </script>
@@ -56,7 +56,9 @@ var prefs = $("#sortable").sortable("toArray");
  </div>
  {% endif %}
    
-    <h1 align="center"> Please order your preferences</h1>
+    <h3 align="center"> Please order your preferences by dragging and
+    dropping the blocks below. You may view the teacher and class
+    description by clicking on the blocks.</h3>
     <ul algin="center" id="sortable" name="sortable">
       {% if classes %}
         {% for class in classes %}

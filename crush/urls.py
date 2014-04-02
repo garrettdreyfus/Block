@@ -28,4 +28,6 @@ urlpatterns = patterns('',
     url(r'^log_in/$', views.log_in, name='log_in'),
     url(r'^school_profile/deadline/$', views.deadline, name='deadline'),
     url(r'^school_profile/notSubmited/$', views.notSubmited, name='notSubmited'),
+    url(r'^userview/success/$', views.success, name='success'),
+    url(r'^userview/success/logout_view/$', views.logout_view, name='logout_view'),
 )

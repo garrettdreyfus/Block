@@ -160,7 +160,6 @@ def edit_class(request):
     classes = []
     for course in Classes.objects.all():
 	    classes.append(course.Class_Name)
-    # print classes
     if oldName not in classes:
 	    messages.add_message(request, messages.ERROR, 'The class in the old name field is incorrect')
 	    return HttpResponseRedirect(reverse('crush:school_profile'))
@@ -249,9 +248,9 @@ def log_in(request):
                 if school.deadline != None and datetime.datetime.utcnow().replace(tzinfo=utc) > school.deadline:
                     messages.add_message(request, messages.ERROR, 'Deadline to submit preferences has passed')
                     return HttpResponseRedirect(reverse('crush:index'))
-                ## if str(Preference.objects.filter(student_id = u.id)) != "[]":
-                ##     messages.add_message(request, messages.ERROR, "You've already entered your Preferences")
-                ##     return HttpResponseRedirect(reverse('crush:index'))
+                if str(Preference.objects.filter(student_id = u.id)) != "[]":
+                    messages.add_message(request, messages.ERROR, "You've already entered your Preferences")
+                    return HttpResponseRedirect(reverse('crush:index'))
                 return HttpResponseRedirect(reverse('crush:userview'))
         else:
             return HttpResponseRedirect(reverse('crush:index'))
@@ -309,7 +308,6 @@ def addMultipleClasses(request):
             capacity = row[4]
             grades = row[3]
             grades = grades.replace('\"', "")
-            print row
             description = row[2].decode('utf-8', 'ignore')
             if len(grades) != 1:
                 ngrade = []
@@ -318,7 +316,6 @@ def addMultipleClasses(request):
                 try:
                     s = int(start)
                     e = int(end)
-                    print "DEBUG:", s, e, name
                     for i in range(s, e+1):
                         ngrade.append(i)
                 except:
@@ -364,7 +361,6 @@ def addSingleClass(request):
         else:
             for i in range(int(start), int(end)+1):
                 ngrade.append(i)
-        # print ngrade
         Class = Classes(
             School=School,
             Class_Name=Name,
@@ -375,6 +371,12 @@ def addSingleClass(request):
         )
         Class.save()
     return HttpResponseRedirect(reverse('crush:school_profile'))
+
+def success(request):
+    u = User.objects.get(username=request.user)
+    u = User_profile.objects.get(user_profile=u)
+    prefs = Preference.objects.filter(student_id = u.id).order_by('rank')
+    return render(request, 'crush/success.html', {'prefs':prefs})
 
 @login_required
 def addStudents(request):
@@ -398,16 +400,13 @@ def addStudents(request):
         username = row[1].lower() + row[0].lower()
         username = username.replace(" ", "")
         username = username[0:30]
-        #print username, len(username)
         if len(User.objects.filter(username= username))==0:
             user = User.objects.create_user(username)
             admin_bol = row[4].lower()
             user.set_password(row[2])
             user.first_name = row[0]
             user.last_name = row[1]
-            #print row[4]
             if str(row[4]) == 'student':
-                #print "GOT HERE"
                 user.email = ""
             user.save()
             student = User_profile(
@@ -423,22 +422,24 @@ def addStudents(request):
 @login_required  
 def pref_reg(request):
     dataString = request.POST["data"]
-    dataString = dataString.split(',')
+    dataString = dataString.split(';')
     p=0
     if Preference.objects.filter(student = request.user) != None:
         existing = Preference.objects.filter(student = User_profile.objects.get(user_profile=request.user)).delete()
     for classname in dataString:
-        realclass = Classes.objects.filter(Class_Name= classname)
-        usr = User_profile.objects.get(user_profile = request.user)
-        pref = Preference(
-            student = usr,
-            rank = p,
-            Class = realclass[0],
-        )
-        pref.save()
-        p+=1
-    messages.add_message(request, messages.SUCCESS, "Your preferences have been noted")
-    return HttpResponse(status=201)
+        try:
+            realclass = Classes.objects.get(Class_Name= classname)
+            usr = User_profile.objects.get(user_profile = request.user)
+            pref = Preference(
+                student = usr,
+                rank = p,
+                Class = realclass,
+            )
+            pref.save()
+            p+=1
+        except Classes.DoesNotExist:
+            print "Class not found. Class name is", classname
+    return HttpResponseRedirect(reverse('crush:success'))
 
 def sort( preferenceDict,request):
     #preferenceDict is a dict with student objects as keys and 
